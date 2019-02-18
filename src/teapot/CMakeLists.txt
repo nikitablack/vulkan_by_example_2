@@ -19,6 +19,7 @@ target_sources(teapot PRIVATE
         src/vulkan/get_physical_device.h
         src/vulkan/get_required_window_extensions.h
         src/vulkan/get_required_window_extensions.cpp
+        src/vulkan/teapot_vulkan.h
 
         src/window/create_window.cpp
         src/window/framebuffer_size_callback.cpp

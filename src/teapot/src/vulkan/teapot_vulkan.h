@@ -1,8 +1,10 @@
-//
-// Created by nc on 2/18/19.
-//
+#pragma once
 
-#ifndef TEAPOT_TEAPOT_VULKAN_H
-#define TEAPOT_TEAPOT_VULKAN_H
+#include "AppData.h"
 
-#endif //TEAPOT_TEAPOT_VULKAN_H
+MaybeAppDataPtr create_instance(AppDataPtr appData) noexcept;
+MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept;
+MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept;
+MaybeAppDataPtr create_surface(AppDataPtr appData) noexcept;
+MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept;
+AppDataPtr get_required_window_extensions(AppDataPtr appData) noexcept;
