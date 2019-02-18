@@ -11,10 +11,10 @@ struct GLFWwindow;
 
 struct AppData
 {
-	GLFWwindow* window{nullptr};
-	bool framebufferResized{false};
-	
-	TeapotData teapotData{};
+    GLFWwindow * window{nullptr};
+    bool framebufferResized{false};
+    
+    TeapotData teapotData{};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
