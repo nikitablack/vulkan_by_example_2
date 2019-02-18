@@ -1,4 +1,4 @@
-#include "framebuffer_size_callback.h"
+#include "teapot_window.h"
 #include "Global.h"
 
 #define GLFW_INCLUDE_VULKAN
@@ -6,5 +6,5 @@
 
 void framebuffer_size_callback(GLFWwindow * const /*window*/, int const /*width*/, int const /*height*/) noexcept
 {
-	framebufferResized = true;
+    framebufferResized = true;
 }

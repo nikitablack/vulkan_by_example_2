@@ -1,4 +1,4 @@
-#include "create_surface.h"
+#include "teapot_vulkan.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -7,10 +7,10 @@
 
 MaybeAppDataPtr create_surface(AppDataPtr appData) noexcept
 {
-	assert(!appData->surface);
-	
-	if (glfwCreateWindowSurface(appData->instance, appData->window, nullptr, &appData->surface) != VK_SUCCESS)
-		return tl::make_unexpected("failed to create window surface");
-	
-	return std::move(appData);
+    assert(!appData->surface);
+    
+    if (glfwCreateWindowSurface(appData->instance, appData->window, nullptr, &appData->surface) != VK_SUCCESS)
+        return tl::make_unexpected("failed to create window surface");
+    
+    return std::move(appData);
 }
