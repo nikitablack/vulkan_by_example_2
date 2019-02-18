@@ -7,6 +7,10 @@ find_package(Vulkan REQUIRED)
 add_executable(teapot "")
 
 target_sources(teapot PRIVATE
+        src/vulkan/clean.cpp
+        src/vulkan/clean.h
+        src/vulkan/create_debug_utils_messenger.cpp
+        src/vulkan/create_debug_utils_messenger.h
         src/vulkan/create_instance.cpp
         src/vulkan/create_instance.h
         src/vulkan/create_logical_device.cpp
@@ -19,6 +23,8 @@ target_sources(teapot PRIVATE
         src/vulkan/get_physical_device.h
         src/vulkan/get_required_window_extensions.h
         src/vulkan/get_required_window_extensions.cpp
+        src/vulkan/vulkan_debug_callback.h
+        src/vulkan/vulkan_debug_callback.cpp
 
         src/window/create_window.cpp
         src/window/create_window.h

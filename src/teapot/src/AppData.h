@@ -20,6 +20,7 @@ struct AppData
 	std::vector<char const *> layers{};
 	std::vector<char const *> instanceExtensions{};
 	std::vector<char const *> deviceExtensions{};
+	PFN_vkDebugUtilsMessengerCallbackEXT debugCallback{nullptr};
 	
 	VkInstance instance{VK_NULL_HANDLE};
 	VkSurfaceKHR surface{VK_NULL_HANDLE};
@@ -33,11 +34,11 @@ struct AppData
 	VkPhysicalDeviceFeatures physicalDeviceFeatures{};
 	VkPhysicalDeviceProperties physicalDeviceProperties{};
 	VkDevice device{VK_NULL_HANDLE};
-	
 	VkShaderModule vertexShaderModule{VK_NULL_HANDLE};
 	VkShaderModule tessControlShaderModule{VK_NULL_HANDLE};
 	VkShaderModule tessEvaluationShaderModule{VK_NULL_HANDLE};
 	VkShaderModule fragmentShaderModule{VK_NULL_HANDLE};
+	VkDebugUtilsMessengerEXT debugUtilsMessenger{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
