@@ -8,23 +8,15 @@ add_executable(teapot "")
 
 target_sources(teapot PRIVATE
         src/vulkan/clean.cpp
-        src/vulkan/clean.h
         src/vulkan/create_debug_utils_messenger.cpp
-        src/vulkan/create_debug_utils_messenger.h
         src/vulkan/create_instance.cpp
-        src/vulkan/create_instance.h
         src/vulkan/create_logical_device.cpp
-        src/vulkan/create_logical_device.h
         src/vulkan/create_shader_modules.cpp
-        src/vulkan/create_shader_modules.h
-        src/vulkan/create_surface.h
         src/vulkan/create_surface.cpp
         src/vulkan/get_physical_device.cpp
-        src/vulkan/get_physical_device.h
-        src/vulkan/get_required_window_extensions.h
         src/vulkan/get_required_window_extensions.cpp
+        src/vulkan/set_debug_utils_object_name.cpp
         src/vulkan/teapot_vulkan.h
-        src/vulkan/vulkan_debug_callback.h
         src/vulkan/vulkan_debug_callback.cpp
 
         src/window/create_window.cpp
@@ -52,6 +44,8 @@ set_target_properties(teapot PROPERTIES
         )
 
 target_compile_options(teapot PRIVATE ${CXXCOMPILEOPTIONS})
+
+target_compile_definitions(teapot PRIVATE ENABLE_VULKAN_DEBUG_UTILS)
 
 target_link_libraries(teapot PRIVATE
         eigen

@@ -61,6 +61,14 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->vertexShaderModule) != VK_SUCCESS)
             return tl::make_unexpected("failed to create vertex shader module");
+
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        set_debug_utils_object_name(appData->instance,
+                                    appData->device,
+                                    VK_OBJECT_TYPE_SHADER_MODULE,
+                                    reinterpret_cast<uint64_t>(appData->vertexShaderModule),
+                                    "vertex shader module");
+#endif
     }
     
     // tesselation control shader
@@ -85,6 +93,14 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessControlShaderModule) != VK_SUCCESS)
             return tl::make_unexpected("failed to create tesselation control shader module");
+
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        set_debug_utils_object_name(appData->instance,
+                                    appData->device,
+                                    VK_OBJECT_TYPE_SHADER_MODULE,
+                                    reinterpret_cast<uint64_t>(appData->tessControlShaderModule),
+                                    "tesselation control shader module");
+#endif
     }
     
     // tesselation evaluation shader
@@ -109,6 +125,14 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessEvaluationShaderModule) != VK_SUCCESS)
             return tl::make_unexpected("failed to create tesselation evaluation shader module");
+
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        set_debug_utils_object_name(appData->instance,
+                                    appData->device,
+                                    VK_OBJECT_TYPE_SHADER_MODULE,
+                                    reinterpret_cast<uint64_t>(appData->tessEvaluationShaderModule),
+                                    "tesselation evaluation shader module");
+#endif
     }
     
     // fragment shader
@@ -133,6 +157,14 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->fragmentShaderModule) != VK_SUCCESS)
             return tl::make_unexpected("failed to create fragment shader module");
+
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        set_debug_utils_object_name(appData->instance,
+                                    appData->device,
+                                    VK_OBJECT_TYPE_SHADER_MODULE,
+                                    reinterpret_cast<uint64_t>(appData->fragmentShaderModule),
+                                    "fragment shader module");
+#endif
     }
     
     return std::move(appData);
