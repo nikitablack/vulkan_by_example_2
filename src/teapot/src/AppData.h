@@ -12,10 +12,10 @@ struct GLFWwindow;
 
 struct AppData
 {
-	GLFWwindow* window{nullptr};
-	bool framebufferResized{false};
-	
-	TeapotData teapotData{};
+    GLFWwindow * window{nullptr};
+    bool framebufferResized{false};
+    
+    TeapotData teapotData{};
 	
 	std::vector<char const *> layers{};
 	std::vector<char const *> instanceExtensions{};

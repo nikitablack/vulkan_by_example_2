@@ -1,10 +1,4 @@
-#include "vulkan/create_instance.h"
-#include "vulkan/create_logical_device.h"
-#include "vulkan/create_shader_modules.h"
-#include "vulkan/create_surface.h"
-#include "vulkan/get_physical_device.h"
-#include "vulkan/get_required_window_extensions.h"
-#include "window/create_window.h"
+#include "window/teapot_window.h"
 #include "AppData.h"
 #include "Global.h"
 

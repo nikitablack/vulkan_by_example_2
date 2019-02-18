@@ -21,11 +21,9 @@ target_sources(teapot PRIVATE
         src/vulkan/get_required_window_extensions.cpp
 
         src/window/create_window.cpp
-        src/window/create_window.h
         src/window/framebuffer_size_callback.cpp
-        src/window/framebuffer_size_callback.h
         src/window/on_key_press.cpp
-        src/window/on_key_press.h
+        src/window/teapot_window.h
 
         src/AppData.h
         src/Global.h
