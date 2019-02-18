@@ -1,10 +1,25 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
+set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/bin/glslangValidator" CACHE FILEPATH "Path to glslangValidator executable")
+
 find_package(Vulkan REQUIRED)
 
 add_executable(teapot "")
 
 target_sources(teapot PRIVATE
+        src/vulkan/create_instance.cpp
+        src/vulkan/create_instance.h
+        src/vulkan/create_logical_device.cpp
+        src/vulkan/create_logical_device.h
+        src/vulkan/create_shader_modules.cpp
+        src/vulkan/create_shader_modules.h
+        src/vulkan/create_surface.h
+        src/vulkan/create_surface.cpp
+        src/vulkan/get_physical_device.cpp
+        src/vulkan/get_physical_device.h
+        src/vulkan/get_required_window_extensions.h
+        src/vulkan/get_required_window_extensions.cpp
+
         src/window/create_window.cpp
         src/window/create_window.h
         src/window/framebuffer_size_callback.cpp
@@ -42,3 +57,45 @@ target_link_libraries(teapot PRIVATE
 
 target_include_directories(teapot PRIVATE src)
 target_include_directories(teapot SYSTEM PRIVATE ${Vulkan_INCLUDE_DIRS})
+
+function(addCompileShadersCommand)
+    cmake_parse_arguments(addCompileShadersCommand "" "TARGET_NAME;OUTPUT_DIR" "SHADERS" ${ARGN})
+
+    if(NOT addCompileShadersCommand_TARGET_NAME)
+        message(FATAL_ERROR "Provide unique target name")
+    endif()
+
+    if(NOT addCompileShadersCommand_SHADERS)
+        message(FATAL_ERROR "At least one shader file name should be provided")
+    endif()
+
+    set(FILE_NAMES "")
+    set(OUTPUT_PATHS "")
+
+    foreach(shader ${addCompileShadersCommand_SHADERS})
+        get_filename_component(VAR ${shader} NAME_WE)
+        list(APPEND FILE_NAMES ${VAR})
+        list(APPEND OUTPUT_PATHS ${addCompileShadersCommand_OUTPUT_DIR}/${VAR}.spv)
+
+        add_custom_command(OUTPUT ${addCompileShadersCommand_OUTPUT_DIR}/${VAR}.spv
+                COMMAND ${GLSL_VALIDATOR} -V ${shader} -o ${addCompileShadersCommand_OUTPUT_DIR}/${VAR}.spv
+                DEPENDS ${shader}
+                )
+    endforeach()
+
+    add_custom_target(${addCompileShadersCommand_TARGET_NAME}
+            DEPENDS ${OUTPUT_PATHS}
+            COMMENT "Compiling ${FILE_NAMES}"
+            )
+
+    add_dependencies(teapot ${addCompileShadersCommand_TARGET_NAME})
+endfunction()
+
+addCompileShadersCommand(TARGET_NAME shaders
+        OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin
+        SHADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/VertexShader.vert
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/TesselationControlShader.tesc
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/TesselationEvaluationShader.tese
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/FragmentShader.frag
+        )
