@@ -26,17 +26,17 @@ AppDataPtr clean(AppDataPtr appData) noexcept
         appData->surface = VK_NULL_HANDLE;
     }
     
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
+    PFN_vkDestroyDebugUtilsMessengerEXT const func{
+            reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(appData->instance,
+                                                                                        "vkDestroyDebugUtilsMessengerEXT"))};
+    
+    if (func)
     {
-        PFN_vkDestroyDebugUtilsMessengerEXT const func{
-                reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(appData->instance,
-                                                                                            "vkDestroyDebugUtilsMessengerEXT"))};
-        
-        if (func)
-        {
-            func(appData->instance, appData->debugUtilsMessenger, nullptr);
-            appData->debugUtilsMessenger = VK_NULL_HANDLE;
-        }
+        func(appData->instance, appData->debugUtilsMessenger, nullptr);
+        appData->debugUtilsMessenger = VK_NULL_HANDLE;
     }
+#endif
     
     vkDestroyInstance(appData->instance, nullptr);
     appData->instance = VK_NULL_HANDLE;

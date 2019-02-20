@@ -17,7 +17,11 @@ int main()
     AppDataPtr appData{std::make_unique<AppData>()};
     
     appData->layers.push_back("VK_LAYER_LUNARG_standard_validation");
+
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
     appData->instanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+    
     appData->debugCallback = &vulkan_debug_callback;
     
     auto mbAppData{create_window(std::move(appData))
@@ -27,7 +31,9 @@ int main()
                    .and_then(create_surface)
                    .and_then(get_physical_device)
                    .and_then(create_logical_device)
-                   .and_then(create_shader_modules)};
+                   .and_then(create_shader_modules)
+                   .map(get_device_qeues)
+                   .and_then(create_vertex_buffer)};
     
     if (!mbAppData)
     {

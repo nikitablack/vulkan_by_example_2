@@ -1,3 +1,4 @@
+#include "helpers/set_debug_utils_object_name.h"
 #include "teapot_vulkan.h"
 
 #include <cassert>

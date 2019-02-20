@@ -38,7 +38,15 @@ struct AppData
     VkShaderModule tessControlShaderModule{VK_NULL_HANDLE};
     VkShaderModule tessEvaluationShaderModule{VK_NULL_HANDLE};
     VkShaderModule fragmentShaderModule{VK_NULL_HANDLE};
+
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
     VkDebugUtilsMessengerEXT debugUtilsMessenger{VK_NULL_HANDLE};
+#endif
+    
+    VkQueue graphicsQueue{VK_NULL_HANDLE};
+    VkQueue presentQueue{VK_NULL_HANDLE};
+    VkBuffer vertexBuffer{VK_NULL_HANDLE};
+    VkDeviceMemory vertexBufferDeviceMemory{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

@@ -4,6 +4,7 @@
 
 MaybeAppDataPtr create_debug_utils_messenger(AppDataPtr appData) noexcept
 {
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
     assert(!appData->debugUtilsMessenger);
     
     constexpr VkDebugUtilsMessageSeverityFlagsEXT const messageSeverity{
@@ -30,6 +31,7 @@ MaybeAppDataPtr create_debug_utils_messenger(AppDataPtr appData) noexcept
     
     if (func(appData->instance, &info, nullptr, &appData->debugUtilsMessenger) != VK_SUCCESS)
         return tl::make_unexpected("failed to create debug utils messenger");
+#endif
     
     return std::move(appData);
 }

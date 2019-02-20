@@ -50,14 +50,6 @@ MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept
     
     if (vkCreateDevice(appData->physicalDevice, &deviceCreateInfo, nullptr, &appData->device) != VK_SUCCESS)
         return tl::make_unexpected("failed to create logical device");
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
-    set_debug_utils_object_name(appData->instance,
-                                appData->device,
-                                VK_OBJECT_TYPE_DEVICE,
-                                reinterpret_cast<uint64_t>(appData->device),
-                                "device");
-#endif
     
     return std::move(appData);
 }
