@@ -199,7 +199,7 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
             
             return std::move(appData);
         }
-        catch (std::runtime_error const &error)
+        catch (std::runtime_error const & /*error*/)
         {
             continue;
         }

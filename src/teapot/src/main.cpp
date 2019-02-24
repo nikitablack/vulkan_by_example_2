@@ -16,7 +16,7 @@ int main()
 {
     AppDataPtr appData{std::make_unique<AppData>()};
     
-    auto mbAppData{create_window(std::move(appData))
+	auto mbAppData{create_window(std::move(appData))
                    .map(get_required_window_extensions)
                    .and_then(create_instance)
                    .and_then(create_surface)

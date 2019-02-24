@@ -8,16 +8,10 @@ add_executable(teapot "")
 
 target_sources(teapot PRIVATE
         src/vulkan/create_instance.cpp
-        src/vulkan/create_instance.h
         src/vulkan/create_logical_device.cpp
-        src/vulkan/create_logical_device.h
         src/vulkan/create_shader_modules.cpp
-        src/vulkan/create_shader_modules.h
-        src/vulkan/create_surface.h
         src/vulkan/create_surface.cpp
         src/vulkan/get_physical_device.cpp
-        src/vulkan/get_physical_device.h
-        src/vulkan/get_required_window_extensions.h
         src/vulkan/get_required_window_extensions.cpp
         src/vulkan/teapot_vulkan.h
 
