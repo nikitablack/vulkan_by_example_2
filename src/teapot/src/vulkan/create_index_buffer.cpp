@@ -24,12 +24,12 @@ MaybeAppDataPtr create_index_buffer(AppDataPtr appData) noexcept
     
     if (!mbBufferData)
     {
-        LocalDeviceBufferData const bufferDataCopy{mbBufferData.error().bufferData};
+        bufferData = std::move(mbBufferData.error().bufferData);
         
-        appData->indexBuffer = bufferDataCopy.buffer;
-        appData->indexBufferDeviceMemory = bufferDataCopy.bufferDeviceMemory;
+        appData->indexBuffer = bufferData->buffer;
+        appData->indexBufferDeviceMemory = bufferData->bufferDeviceMemory;
         
-        return tl::make_unexpected(AppDataError{mbBufferData.error().message, *appData});
+        return tl::make_unexpected(AppDataError{mbBufferData.error().message, std::move(appData)});
     }
     
     bufferData = std::move(*mbBufferData);

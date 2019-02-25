@@ -18,7 +18,7 @@ MaybeAppDataPtr create_debug_utils_messenger(AppDataPtr appData) noexcept
                                                                                        "vkCreateDebugUtilsMessengerEXT"))};
     
     if (func == nullptr)
-        return tl::make_unexpected(AppDataError{"failed to get debug utils messenger extension function", *appData});
+        return tl::make_unexpected(AppDataError{"failed to get debug utils messenger extension function", std::move(appData)});
     
     VkDebugUtilsMessengerCreateInfoEXT info{};
     info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -30,7 +30,7 @@ MaybeAppDataPtr create_debug_utils_messenger(AppDataPtr appData) noexcept
     info.pUserData = nullptr;
     
     if (func(appData->instance, &info, nullptr, &appData->debugUtilsMessenger) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create debug utils messenger", *appData});
+        return tl::make_unexpected(AppDataError{"failed to create debug utils messenger", std::move(appData)});
 #endif
     
     return std::move(appData);

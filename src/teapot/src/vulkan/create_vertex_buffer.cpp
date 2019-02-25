@@ -24,12 +24,12 @@ MaybeAppDataPtr create_vertex_buffer(AppDataPtr appData) noexcept
     
     if (!mbBufferData)
     {
-        LocalDeviceBufferData const bufferDataCopy{mbBufferData.error().bufferData};
+        bufferData = std::move(mbBufferData.error().bufferData);
         
-        appData->vertexBuffer = bufferDataCopy.buffer;
-        appData->vertexBufferDeviceMemory = bufferDataCopy.bufferDeviceMemory;
+        appData->vertexBuffer = bufferData->buffer;
+        appData->vertexBufferDeviceMemory = bufferData->bufferDeviceMemory;
         
-        return tl::make_unexpected(AppDataError{mbBufferData.error().message, *appData});
+        return tl::make_unexpected(AppDataError{mbBufferData.error().message, std::move(appData)});
     }
     
     bufferData = std::move(*mbBufferData);

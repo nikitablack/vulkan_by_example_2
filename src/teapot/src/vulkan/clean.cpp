@@ -5,6 +5,12 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    vkDestroyBuffer(appData->device, appData->indexBuffer, nullptr);
+    appData->indexBuffer = VK_NULL_HANDLE;
+    
+    vkFreeMemory(appData->device, appData->indexBufferDeviceMemory, nullptr);
+    appData->indexBufferDeviceMemory = VK_NULL_HANDLE;
+    
     vkDestroyBuffer(appData->device, appData->vertexBuffer, nullptr);
     appData->vertexBuffer = VK_NULL_HANDLE;
     
