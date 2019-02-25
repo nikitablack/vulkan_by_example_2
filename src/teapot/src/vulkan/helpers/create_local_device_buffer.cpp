@@ -22,7 +22,7 @@ MaybeLocalDeviceBufferDataPtr create_staging_buffer(LocalDeviceBufferDataPtr buf
     info.pQueueFamilyIndices = nullptr;
     
     if (vkCreateBuffer(bufferData->device, &info, nullptr, &bufferData->stagingBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to create staging buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to create staging buffer", *bufferData});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(bufferData->instance,
@@ -46,7 +46,7 @@ MaybeLocalDeviceBufferDataPtr find_staging_buffer_memory_type(LocalDeviceBufferD
                                                                   VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)};
     
     if (!mbMemPropIndex)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to find memory index for staging buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to find memory index for staging buffer", *bufferData});
     
     bufferData->stagingBufferMemoryTypeIndex = *mbMemPropIndex;
     
@@ -67,7 +67,7 @@ MaybeLocalDeviceBufferDataPtr create_staging_device_memory(LocalDeviceBufferData
     info.memoryTypeIndex = bufferData->stagingBufferMemoryTypeIndex;
     
     if (vkAllocateMemory(bufferData->device, &info, nullptr, &bufferData->stagingBufferDeviceMemory) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to allocate staging buffer memory", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to allocate staging buffer memory", *bufferData});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(bufferData->instance,
@@ -84,7 +84,7 @@ MaybeLocalDeviceBufferDataPtr bind_staging_buffer_and_memory(LocalDeviceBufferDa
 {
     if (vkBindBufferMemory(bufferData->device, bufferData->stagingBuffer, bufferData->stagingBufferDeviceMemory, 0) !=
         VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to bind staging buffer and memory", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to bind staging buffer and memory", *bufferData});
     
     return std::move(bufferData);
 }
@@ -94,7 +94,7 @@ MaybeLocalDeviceBufferDataPtr copy_data_to_staging_buffer(LocalDeviceBufferDataP
     void * mappedDataPtr{nullptr};
     if (vkMapMemory(bufferData->device, bufferData->stagingBufferDeviceMemory, 0, bufferData->dataSize, 0,
                     &mappedDataPtr) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to map staging buffer memory", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to map staging buffer memory", *bufferData});
     
     std::memcpy(mappedDataPtr, bufferData->data, static_cast<size_t>(bufferData->dataSize));
     
@@ -118,7 +118,7 @@ MaybeLocalDeviceBufferDataPtr create_buffer(LocalDeviceBufferDataPtr bufferData)
     info.pQueueFamilyIndices = nullptr;
     
     if (vkCreateBuffer(bufferData->device, &info, nullptr, &bufferData->buffer) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to create buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to create buffer", *bufferData});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(bufferData->instance,
@@ -141,7 +141,7 @@ MaybeLocalDeviceBufferDataPtr find_buffer_memory_type(LocalDeviceBufferDataPtr b
                                                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)};
     
     if (!mbMemPropIndex)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to find memory index for buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to find memory index for buffer", *bufferData});
     
     bufferData->bufferMemoryTypeIndex = *mbMemPropIndex;
     
@@ -162,7 +162,7 @@ MaybeLocalDeviceBufferDataPtr create_device_memory(LocalDeviceBufferDataPtr buff
     info.memoryTypeIndex = bufferData->bufferMemoryTypeIndex;
     
     if (vkAllocateMemory(bufferData->device, &info, nullptr, &bufferData->bufferDeviceMemory) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to allocate buffer memory", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to allocate buffer memory", *bufferData});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(bufferData->instance,
@@ -178,7 +178,7 @@ MaybeLocalDeviceBufferDataPtr create_device_memory(LocalDeviceBufferDataPtr buff
 MaybeLocalDeviceBufferDataPtr bind_buffer_and_memory(LocalDeviceBufferDataPtr bufferData) noexcept
 {
     if (vkBindBufferMemory(bufferData->device, bufferData->buffer, bufferData->bufferDeviceMemory, 0) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to bind buffer and memory", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to bind buffer and memory", *bufferData});
     
     return std::move(bufferData);
 }
@@ -194,7 +194,7 @@ MaybeLocalDeviceBufferDataPtr create_copy_command_pool(LocalDeviceBufferDataPtr 
     info.queueFamilyIndex = bufferData->copyQueueFamilyIndex;
     
     if (vkCreateCommandPool(bufferData->device, &info, nullptr, &bufferData->commandPool) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to create command pool", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to create command pool", *bufferData});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(bufferData->instance,
@@ -219,7 +219,7 @@ MaybeLocalDeviceBufferDataPtr allocate_command_buffer(LocalDeviceBufferDataPtr b
     info.commandBufferCount = 1;
     
     if (vkAllocateCommandBuffers(bufferData->device, &info, &bufferData->commandBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to allocate command buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to allocate command buffer", *bufferData});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(bufferData->instance,
@@ -241,7 +241,7 @@ MaybeLocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData) n
     beginInfo.pInheritanceInfo = nullptr;
     
     if (vkBeginCommandBuffer(bufferData->commandBuffer, &beginInfo) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to begin command buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to begin command buffer", *bufferData});
     
     {
         VkBufferCopy copy{};
@@ -269,7 +269,7 @@ MaybeLocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData) n
     }
     
     if (vkEndCommandBuffer(bufferData->commandBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to end command buffer", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to end command buffer", *bufferData});
     
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -283,10 +283,10 @@ MaybeLocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData) n
     submitInfo.pSignalSemaphores = nullptr;
     
     if (vkQueueSubmit(bufferData->copyQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to submit queue", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to submit queue", *bufferData});
     
     if (vkQueueWaitIdle(bufferData->copyQueue) != VK_SUCCESS)
-        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to wait queue idle", std::move(bufferData)});
+        return tl::make_unexpected(LocalDeviceBufferDataError{"create_local_device_buffer: failed to wait queue idle", *bufferData});
     
     return std::move(bufferData);
 }
@@ -308,20 +308,20 @@ MaybeLocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPt
                       .and_then(allocate_command_buffer)
                       .and_then(copy_buffer)};
     
-    LocalDeviceBufferData const * rawBufferData{nullptr};
-    
     if(!mbBufferData)
     {
-        rawBufferData = mbBufferData.error().bufferData.get();
+        LocalDeviceBufferData const bufferDataCopy{mbBufferData.error().bufferData};
+    
+        vkDestroyBuffer(bufferDataCopy.device, bufferDataCopy.stagingBuffer, nullptr);
+        vkFreeMemory(bufferDataCopy.device, bufferDataCopy.stagingBufferDeviceMemory, nullptr);
+        vkDestroyCommandPool(bufferDataCopy.device, bufferDataCopy.commandPool, nullptr);
     }
     else
     {
-        rawBufferData = (*mbBufferData).get();
+        vkDestroyBuffer((*mbBufferData)->device, (*mbBufferData)->stagingBuffer, nullptr);
+        vkFreeMemory((*mbBufferData)->device, (*mbBufferData)->stagingBufferDeviceMemory, nullptr);
+        vkDestroyCommandPool((*mbBufferData)->device, (*mbBufferData)->commandPool, nullptr);
     }
-    
-    vkDestroyBuffer(rawBufferData->device, rawBufferData->stagingBuffer, nullptr);
-    vkFreeMemory(rawBufferData->device, rawBufferData->stagingBufferDeviceMemory, nullptr);
-    vkDestroyCommandPool(rawBufferData->device, rawBufferData->commandPool, nullptr);
     
     return std::move(mbBufferData);
 }

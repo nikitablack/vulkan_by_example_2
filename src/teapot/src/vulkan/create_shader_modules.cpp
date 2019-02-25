@@ -95,7 +95,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessControlShaderModule) != VK_SUCCESS)
             return tl::make_unexpected(AppDataError{"failed to create tesselation control shader module", *appData});
     
-        ifdef ENABLE_VULKAN_DEBUG_UTILS
+#ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
                                     VK_OBJECT_TYPE_SHADER_MODULE,

@@ -32,14 +32,13 @@ struct LocalDeviceBufferData
     VkCommandBuffer commandBuffer{VK_NULL_HANDLE};
 };
 
-using LocalDeviceBufferDataPtr = std::unique_ptr<LocalDeviceBufferData>;
-
 struct LocalDeviceBufferDataError
 {
     std::string message{};
-    LocalDeviceBufferDataPtr bufferData{nullptr};
+    LocalDeviceBufferData bufferData{};
 };
 
+using LocalDeviceBufferDataPtr = std::unique_ptr<LocalDeviceBufferData>;
 using MaybeLocalDeviceBufferDataPtr = tl::expected<LocalDeviceBufferDataPtr, LocalDeviceBufferDataError>;
 
 MaybeLocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPtr bufferData) noexcept;
