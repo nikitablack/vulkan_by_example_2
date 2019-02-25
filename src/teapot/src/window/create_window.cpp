@@ -6,17 +6,17 @@
 MaybeAppDataPtr create_window(AppDataPtr appData) noexcept
 {
     if (!glfwInit())
-        return tl::make_unexpected(AppDataError{"failed to init glfw", *appData});
+        return tl::make_unexpected(AppDataError{"failed to init glfw", std::move(appData)});
     
     if (!glfwVulkanSupported())
-        return tl::make_unexpected(AppDataError{"vulkan is not supported", *appData});
+        return tl::make_unexpected(AppDataError{"vulkan is not supported", std::move(appData)});
     
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     
     GLFWwindow * const window{glfwCreateWindow(800, 600, "Teapot", nullptr, nullptr)};
     if (!window)
-        return tl::make_unexpected(AppDataError{"failed to create window", *appData});
+        return tl::make_unexpected(AppDataError{"failed to create window", std::move(appData)});
     
     appData->window = window;
     

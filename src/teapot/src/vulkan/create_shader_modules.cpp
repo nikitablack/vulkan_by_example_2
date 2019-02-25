@@ -50,7 +50,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(AppDataError{error.what(), *appData});
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -82,7 +82,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(AppDataError{error.what(), *appData});
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -114,7 +114,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(AppDataError{error.what(), *appData});
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -146,7 +146,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(AppDataError{error.what(), *appData});
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
