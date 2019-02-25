@@ -129,6 +129,11 @@ MaybeAppDataPtr bind_buffers(AppDataPtr appData) noexcept
 
 MaybeAppDataPtr create_matrix_buffers(AppDataPtr appData) noexcept
 {
+    assert(!appData->projMatrixBuffer);
+    assert(!appData->viewMatrixBuffer);
+    assert(!appData->modelMatrixBuffer);
+    assert(!appData->matrixBuffersDeviceMemory);
+    
     auto mbAppData{create_buffers(std::move(appData))
                            .and_then(allocate_memory)
                            .and_then(bind_buffers)};
