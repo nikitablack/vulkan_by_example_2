@@ -22,7 +22,7 @@ using AppDataPtr = std::unique_ptr<AppData>;
 struct AppDataError
 {
     std::string message{};
-    AppData appData{};
+    AppDataPtr appData{};
 };
 
 using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;
