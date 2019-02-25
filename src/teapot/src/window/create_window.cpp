@@ -3,8 +3,12 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <cassert>
+
 MaybeAppDataPtr create_window(AppDataPtr appData) noexcept
 {
+    assert(!appData->window);
+    
     if (!glfwInit())
         return tl::make_unexpected(AppDataError{"failed to init glfw", std::move(appData)});
     

@@ -7,6 +7,7 @@
 MaybeAppDataPtr create_vertex_buffer(AppDataPtr appData) noexcept
 {
     assert(!appData->vertexBuffer);
+    assert(!appData->vertexBufferDeviceMemory);
     
     LocalDeviceBufferDataPtr bufferData{std::make_unique<LocalDeviceBufferData>()};
     bufferData->instance = appData->instance;

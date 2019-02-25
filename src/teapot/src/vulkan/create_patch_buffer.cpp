@@ -7,6 +7,7 @@
 MaybeAppDataPtr create_patch_buffer(AppDataPtr appData) noexcept
 {
     assert(!appData->patchBuffer);
+    assert(!appData->patchBufferDeviceMemory);
     assert(appData->teapotData.patchesTransforms.size() / 16 == appData->teapotData.patchesColors.size() / 4);
     
     std::vector<float> patchData{};

@@ -7,6 +7,7 @@
 MaybeAppDataPtr create_index_buffer(AppDataPtr appData) noexcept
 {
     assert(!appData->indexBuffer);
+    assert(!appData->indexBufferDeviceMemory);
     
     LocalDeviceBufferDataPtr bufferData{std::make_unique<LocalDeviceBufferData>()};
     bufferData->instance = appData->instance;
