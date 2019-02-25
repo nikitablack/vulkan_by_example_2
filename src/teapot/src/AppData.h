@@ -56,8 +56,7 @@ using AppDataPtr = std::unique_ptr<AppData>;
 struct AppDataError
 {
     std::string message{};
-    AppDataPtr appData{nullptr};
+    AppData appData{};
 };
-
 
 using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;

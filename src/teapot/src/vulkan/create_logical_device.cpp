@@ -49,7 +49,7 @@ MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept
     deviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
     
     if (vkCreateDevice(appData->physicalDevice, &deviceCreateInfo, nullptr, &appData->device) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create logical device", std::move(appData)});
+        return tl::make_unexpected(AppDataError{"failed to create logical device", *appData});
     
     return std::move(appData);
 }

@@ -174,12 +174,12 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
     uint32_t deviceCount{0};
     
     if (vkEnumeratePhysicalDevices(appData->instance, &deviceCount, nullptr) != VK_SUCCESS || deviceCount == 0)
-        return tl::make_unexpected(AppDataError{"failed to find GPUs with Vulkan support", std::move(appData)});
+        return tl::make_unexpected(AppDataError{"failed to find GPUs with Vulkan support", *appData});
     
     std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
     
     if (vkEnumeratePhysicalDevices(appData->instance, &deviceCount, physicalDevices.data()) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to find GPUs with Vulkan support", std::move(appData)});
+        return tl::make_unexpected(AppDataError{"failed to find GPUs with Vulkan support", *appData});
     
     for (VkPhysicalDevice const d : physicalDevices)
     {
@@ -205,5 +205,5 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
         }
     }
     
-    return tl::make_unexpected(AppDataError{"failed to find suitable device", std::move(appData)});
+    return tl::make_unexpected(AppDataError{"failed to find suitable device", *appData});
 }
