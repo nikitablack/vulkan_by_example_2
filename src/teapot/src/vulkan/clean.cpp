@@ -5,6 +5,9 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    vkDestroyDescriptorPool(appData->device, appData->descriptorPool, nullptr);
+    appData->descriptorPool = VK_NULL_HANDLE;
+    
     vkDestroyBuffer(appData->device, appData->projMatrixBuffer, nullptr);
     appData->projMatrixBuffer = VK_NULL_HANDLE;
     

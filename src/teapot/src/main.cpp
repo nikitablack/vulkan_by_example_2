@@ -37,7 +37,8 @@ int main()
                    .and_then(create_vertex_buffer)
                    .and_then(create_index_buffer)
                    .and_then(create_patch_buffer)
-                   .and_then(create_matrix_buffers)};
+                   .and_then(create_matrix_buffers)
+                   .and_then(create_descriptor_pool)};
     
     if (!mbAppData)
     {
