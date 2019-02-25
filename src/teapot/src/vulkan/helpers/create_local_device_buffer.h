@@ -33,6 +33,13 @@ struct LocalDeviceBufferData
 };
 
 using LocalDeviceBufferDataPtr = std::unique_ptr<LocalDeviceBufferData>;
-using MaybeLocalDeviceBufferDataPtr = tl::expected<LocalDeviceBufferDataPtr, std::string>;
+
+struct LocalDeviceBufferDataError
+{
+    std::string message{};
+    LocalDeviceBufferDataPtr bufferData{nullptr};
+};
+
+using MaybeLocalDeviceBufferDataPtr = tl::expected<LocalDeviceBufferDataPtr, LocalDeviceBufferDataError>;
 
 MaybeLocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPtr bufferData) noexcept;

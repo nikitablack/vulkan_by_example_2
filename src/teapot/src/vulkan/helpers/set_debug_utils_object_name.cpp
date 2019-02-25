@@ -19,8 +19,5 @@ bool set_debug_utils_object_name(VkInstance const instance,
     info.objectHandle = objectHandle;
     info.pObjectName = pObjectName;
     
-    auto res = func(device, &info);
-    (void)res;
-    
     return func(device, &info) == VK_SUCCESS;
 }

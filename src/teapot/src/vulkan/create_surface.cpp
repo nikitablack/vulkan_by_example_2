@@ -10,7 +10,7 @@ MaybeAppDataPtr create_surface(AppDataPtr appData) noexcept
     assert(!appData->surface);
     
     if (glfwCreateWindowSurface(appData->instance, appData->window, nullptr, &appData->surface) != VK_SUCCESS)
-        return tl::make_unexpected("failed to create window surface");
+        return tl::make_unexpected(AppDataError{"failed to create window surface", std::move(appData)});
     
     return std::move(appData);
 }

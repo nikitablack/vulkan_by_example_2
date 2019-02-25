@@ -16,6 +16,7 @@ target_sources(teapot PRIVATE
 
         src/vulkan/clean.cpp
         src/vulkan/create_debug_utils_messenger.cpp
+        src/vulkan/create_index_buffer.cpp
         src/vulkan/create_instance.cpp
         src/vulkan/create_logical_device.cpp
         src/vulkan/create_shader_modules.cpp

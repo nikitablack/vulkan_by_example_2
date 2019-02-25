@@ -17,7 +17,7 @@ MaybeAppDataPtr create_instance(AppDataPtr appData) noexcept
     info.ppEnabledExtensionNames = appData->instanceExtensions.data();
     
     if (vkCreateInstance(&info, nullptr, &appData->instance) != VK_SUCCESS)
-        return tl::make_unexpected("failed to create instance");
+        return tl::make_unexpected(AppDataError{"failed to create instance", std::move(appData)});
     
     return std::move(appData);
 }

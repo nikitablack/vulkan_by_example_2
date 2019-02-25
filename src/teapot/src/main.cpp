@@ -33,11 +33,15 @@ int main()
                    .and_then(create_logical_device)
                    .and_then(create_shader_modules)
                    .map(get_device_qeues)
-                   .and_then(create_vertex_buffer)};
+                   .and_then(create_vertex_buffer)
+                   .and_then(create_index_buffer)};
     
     if (!mbAppData)
     {
-        std::cout << mbAppData.error() << std::endl;
+        std::cout << mbAppData.error().message << std::endl;
+    
+        appData = clean(std::move(appData));
+        
         return 1;
     }
     

@@ -50,7 +50,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(error.what());
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -61,7 +61,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->vertexShaderModule) != VK_SUCCESS)
-            return tl::make_unexpected("failed to create vertex shader module");
+            return tl::make_unexpected(AppDataError{"failed to create vertex shader module", std::move(appData)});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,
@@ -82,7 +82,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(error.what());
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -93,7 +93,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessControlShaderModule) != VK_SUCCESS)
-            return tl::make_unexpected("failed to create tesselation control shader module");
+            return tl::make_unexpected(AppDataError{"failed to create tesselation control shader module", std::move(appData)});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,
@@ -114,7 +114,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(error.what());
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -125,7 +125,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessEvaluationShaderModule) != VK_SUCCESS)
-            return tl::make_unexpected("failed to create tesselation evaluation shader module");
+            return tl::make_unexpected(AppDataError{"failed to create tesselation evaluation shader module", std::move(appData)});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,
@@ -146,7 +146,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         }
         catch (std::runtime_error const &error)
         {
-            return tl::make_unexpected(error.what());
+            return tl::make_unexpected(AppDataError{error.what(), std::move(appData)});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -157,7 +157,7 @@ MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->fragmentShaderModule) != VK_SUCCESS)
-            return tl::make_unexpected("failed to create fragment shader module");
+            return tl::make_unexpected(AppDataError{"failed to create fragment shader module", std::move(appData)});
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,

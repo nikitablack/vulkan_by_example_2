@@ -47,7 +47,17 @@ struct AppData
     VkQueue presentQueue{VK_NULL_HANDLE};
     VkBuffer vertexBuffer{VK_NULL_HANDLE};
     VkDeviceMemory vertexBufferDeviceMemory{VK_NULL_HANDLE};
+    VkBuffer indexBuffer{VK_NULL_HANDLE};
+    VkDeviceMemory indexBufferDeviceMemory{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
-using MaybeAppDataPtr = tl::expected<AppDataPtr, std::string>;
+
+struct AppDataError
+{
+    std::string message{};
+    AppDataPtr appData{nullptr};
+};
+
+
+using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;
