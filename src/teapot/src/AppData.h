@@ -48,5 +48,4 @@ struct AppDataError
     AppData appData{};
 };
 
-
 using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;
