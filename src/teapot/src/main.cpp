@@ -11,6 +11,7 @@
 bool framebufferResized{false};
 bool solidMode{true};
 float tesselationLevel{1.0};
+uint32_t numConcurrentResources{2};
 
 int main()
 {
@@ -34,7 +35,9 @@ int main()
                    .and_then(create_shader_modules)
                    .map(get_device_qeues)
                    .and_then(create_vertex_buffer)
-                   .and_then(create_index_buffer)};
+                   .and_then(create_index_buffer)
+                   .and_then(create_patch_buffer)
+                   .and_then(create_matrix_buffers)};
     
     if (!mbAppData)
     {

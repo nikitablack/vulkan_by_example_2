@@ -49,6 +49,12 @@ struct AppData
     VkDeviceMemory vertexBufferDeviceMemory{VK_NULL_HANDLE};
     VkBuffer indexBuffer{VK_NULL_HANDLE};
     VkDeviceMemory indexBufferDeviceMemory{VK_NULL_HANDLE};
+    VkBuffer patchBuffer{VK_NULL_HANDLE};
+    VkDeviceMemory patchBufferDeviceMemory{VK_NULL_HANDLE};
+    VkBuffer projMatrixBuffer{};
+    VkBuffer viewMatrixBuffer{};
+    VkBuffer modelMatrixBuffer{};
+    VkDeviceMemory matrixBuffersDeviceMemory{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

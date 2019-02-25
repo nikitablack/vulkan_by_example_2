@@ -19,6 +19,8 @@ target_sources(teapot PRIVATE
         src/vulkan/create_index_buffer.cpp
         src/vulkan/create_instance.cpp
         src/vulkan/create_logical_device.cpp
+        src/vulkan/create_matrix_buffers.cpp
+        src/vulkan/create_patch_buffer.cpp
         src/vulkan/create_shader_modules.cpp
         src/vulkan/create_surface.cpp
         src/vulkan/create_vertex_buffer.cpp

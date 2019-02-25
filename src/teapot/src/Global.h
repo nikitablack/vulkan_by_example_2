@@ -7,3 +7,4 @@
 extern bool framebufferResized;
 extern bool solidMode;
 extern float tesselationLevel;
+extern uint32_t numConcurrentResources;

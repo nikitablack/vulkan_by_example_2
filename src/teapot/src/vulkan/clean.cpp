@@ -5,6 +5,24 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    vkDestroyBuffer(appData->device, appData->projMatrixBuffer, nullptr);
+    appData->projMatrixBuffer = VK_NULL_HANDLE;
+    
+    vkDestroyBuffer(appData->device, appData->viewMatrixBuffer, nullptr);
+    appData->viewMatrixBuffer = VK_NULL_HANDLE;
+    
+    vkDestroyBuffer(appData->device, appData->modelMatrixBuffer, nullptr);
+    appData->modelMatrixBuffer = VK_NULL_HANDLE;
+    
+    vkFreeMemory(appData->device, appData->matrixBuffersDeviceMemory, nullptr);
+    appData->matrixBuffersDeviceMemory = VK_NULL_HANDLE;
+    
+    vkDestroyBuffer(appData->device, appData->patchBuffer, nullptr);
+    appData->patchBuffer = VK_NULL_HANDLE;
+    
+    vkFreeMemory(appData->device, appData->patchBufferDeviceMemory, nullptr);
+    appData->patchBufferDeviceMemory = VK_NULL_HANDLE;
+    
     vkDestroyBuffer(appData->device, appData->indexBuffer, nullptr);
     appData->indexBuffer = VK_NULL_HANDLE;
     
