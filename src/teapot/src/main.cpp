@@ -19,7 +19,7 @@ int main()
     
     if (!mbAppData)
     {
-        std::cout << mbAppData.error() << std::endl;
+        std::cout << mbAppData.error().message << std::endl;
         return 1;
     }
     

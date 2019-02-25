@@ -18,4 +18,11 @@ struct AppData
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
-using MaybeAppDataPtr = tl::expected<AppDataPtr, std::string>;
+
+struct AppDataError
+{
+    std::string message{};
+    AppData appData{};
+};
+
+using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;
