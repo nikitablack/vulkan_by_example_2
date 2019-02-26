@@ -10,21 +10,21 @@ MaybeAppDataPtr create_descriptor_pool(AppDataPtr appData) noexcept
     
     std::array<VkDescriptorPoolSize, 2> poolSizes{};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    poolSizes[0].descriptorCount = 1;
+    poolSizes[0].descriptorCount = 2;
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[1].descriptorCount = 3;
+    poolSizes[1].descriptorCount = 6;
     
     VkDescriptorPoolCreateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     info.pNext = nullptr;
     info.flags = 0;
-    info.maxSets = 1;
+    info.maxSets = 2;
     info.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
     info.pPoolSizes = poolSizes.data();
     
     if (vkCreateDescriptorPool(appData->device, &info, nullptr, &appData->descriptorPool) != VK_SUCCESS)
         return tl::make_unexpected(AppDataError{"failed to create descriptor pool", std::move(appData)});
-
+    
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(appData->instance,
                                 appData->device,

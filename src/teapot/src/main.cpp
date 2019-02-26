@@ -13,6 +13,8 @@ bool solidMode{true};
 float tesselationLevel{1.0};
 uint32_t numConcurrentResources{2};
 
+static_assert(sizeof(float) == shaderDataSize, "expected float to be 4 bytes");
+
 int main()
 {
     AppDataPtr appData{std::make_unique<AppData>()};
@@ -38,7 +40,9 @@ int main()
                    .and_then(create_index_buffer)
                    .and_then(create_patch_buffer)
                    .and_then(create_matrix_buffers)
-                   .and_then(create_descriptor_pool)};
+                   .and_then(create_descriptor_set_layout)
+                   .and_then(create_descriptor_pool)
+                   .and_then(allocate_and_update_descriptor_sets)};
     
     if (!mbAppData)
     {

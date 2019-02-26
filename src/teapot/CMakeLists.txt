@@ -14,9 +14,11 @@ target_sources(teapot PRIVATE
         src/vulkan/helpers/set_debug_utils_object_name.h
         src/vulkan/helpers/set_debug_utils_object_name.cpp
 
+        src/vulkan/allocate_and_update_descriptor_sets.cpp
         src/vulkan/clean.cpp
         src/vulkan/create_debug_utils_messenger.cpp
         src/vulkan/create_descriptor_pool.cpp
+        src/vulkan/create_descriptor_set_layout.cpp
         src/vulkan/create_index_buffer.cpp
         src/vulkan/create_instance.cpp
         src/vulkan/create_logical_device.cpp

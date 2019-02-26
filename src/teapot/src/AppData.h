@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 struct GLFWwindow;
 
@@ -55,8 +56,11 @@ struct AppData
     VkBuffer viewMatrixBuffer{};
     VkBuffer modelMatrixBuffer{};
     VkDeviceMemory matrixBuffersDeviceMemory{VK_NULL_HANDLE};
+    VkDeviceSize matrixBufferOffset{};
     
+    VkDescriptorSetLayout descriptorSetLayout{VK_NULL_HANDLE};
     VkDescriptorPool descriptorPool{VK_NULL_HANDLE};
+    std::vector<VkDescriptorSet> descriptorSets{};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

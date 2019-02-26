@@ -5,6 +5,9 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    vkDestroyDescriptorSetLayout(appData->device, appData->descriptorSetLayout, nullptr);
+    appData->descriptorSetLayout = VK_NULL_HANDLE;
+    
     vkDestroyDescriptorPool(appData->device, appData->descriptorPool, nullptr);
     appData->descriptorPool = VK_NULL_HANDLE;
     
