@@ -7,20 +7,24 @@
 
 namespace {
 
-VkDeviceSize get_buffer_size_aligned_up(VkDeviceSize const baseSize, VkDeviceSize const alignment)
+VkDeviceSize get_next_alignment_up(VkDeviceSize const baseSize, VkDeviceSize const alignment)
 {
     return (baseSize + alignment - 1) & (~(alignment - 1));
 }
 
 MaybeAppDataPtr create_buffers(AppDataPtr appData) noexcept
 {
-    VkDeviceSize const bufferSize{numConcurrentResources * sizeof(float) * 16};
+    VkDeviceSize bufferSize{shaderDataSize * 16};
+    bufferSize = get_next_alignment_up(bufferSize,
+                                       appData->physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    
+    appData->matrixBufferOffset = bufferSize;
     
     VkBufferCreateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     info.pNext = nullptr;
     info.flags = 0;
-    info.size = bufferSize;
+    info.size = bufferSize * numConcurrentResources;
     info.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     info.queueFamilyIndexCount = 0;
@@ -74,8 +78,8 @@ MaybeAppDataPtr allocate_memory(AppDataPtr appData) noexcept
     if (!mbMemPropIndex)
         return tl::make_unexpected(AppDataError{"failed to find memory index for matrix buffers", std::move(appData)});
     
-    VkDeviceSize const alignedBufferSize{get_buffer_size_aligned_up(memRequirements.size,
-                                                                    appData->physicalDeviceProperties.limits.minUniformBufferOffsetAlignment)};
+    VkDeviceSize const alignedBufferSize{get_next_alignment_up(memRequirements.size,
+                                                               memRequirements.alignment)};
     
     VkMemoryAllocateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -106,8 +110,8 @@ MaybeAppDataPtr bind_buffers(AppDataPtr appData) noexcept
     vkGetBufferMemoryRequirements(appData->device, appData->viewMatrixBuffer, &memRequirements);
     vkGetBufferMemoryRequirements(appData->device, appData->modelMatrixBuffer, &memRequirements);
     
-    VkDeviceSize const alignedBufferSize{get_buffer_size_aligned_up(memRequirements.size,
-                                                                    appData->physicalDeviceProperties.limits.minUniformBufferOffsetAlignment)};
+    VkDeviceSize const alignedBufferSize{get_next_alignment_up(memRequirements.size,
+                                                               memRequirements.alignment)};
     
     VkDeviceSize offset{0};
     

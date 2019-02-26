@@ -55,6 +55,7 @@ struct AppData
     VkBuffer viewMatrixBuffer{};
     VkBuffer modelMatrixBuffer{};
     VkDeviceMemory matrixBuffersDeviceMemory{VK_NULL_HANDLE};
+    VkDeviceSize matrixBufferOffset{};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
