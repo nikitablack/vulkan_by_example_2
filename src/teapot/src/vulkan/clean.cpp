@@ -5,6 +5,18 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    vkDestroyRenderPass(appData->device, appData->renderPass, nullptr);
+    appData->renderPass = VK_NULL_HANDLE;
+    
+    vkDestroyPipelineLayout(appData->device, appData->pipelineLayout, nullptr);
+    appData->pipelineLayout = VK_NULL_HANDLE;
+    
+    vkDestroyPipeline(appData->device, appData->solidPipeline, nullptr);
+    appData->solidPipeline = VK_NULL_HANDLE;
+    
+    vkDestroyPipeline(appData->device, appData->wireframePipeline, nullptr);
+    appData->wireframePipeline = VK_NULL_HANDLE;
+    
     vkDestroyDescriptorSetLayout(appData->device, appData->descriptorSetLayout, nullptr);
     appData->descriptorSetLayout = VK_NULL_HANDLE;
     

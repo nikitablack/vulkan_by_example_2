@@ -42,7 +42,10 @@ int main()
                    .and_then(create_matrix_buffers)
                    .and_then(create_descriptor_set_layout)
                    .and_then(create_descriptor_pool)
-                   .and_then(allocate_and_update_descriptor_sets)};
+                   .and_then(allocate_and_update_descriptor_sets)
+                   .and_then(create_pipeline_layout)
+                   .and_then(create_render_pass)
+                   .and_then(create_pipelines)};
     
     if (!mbAppData)
     {

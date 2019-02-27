@@ -24,6 +24,9 @@ target_sources(teapot PRIVATE
         src/vulkan/create_logical_device.cpp
         src/vulkan/create_matrix_buffers.cpp
         src/vulkan/create_patch_buffer.cpp
+        src/vulkan/create_pipeline_layout.cpp
+        src/vulkan/create_pipelines.cpp
+        src/vulkan/create_render_pass.cpp
         src/vulkan/create_shader_modules.cpp
         src/vulkan/create_surface.cpp
         src/vulkan/create_vertex_buffer.cpp

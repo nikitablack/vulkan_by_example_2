@@ -61,6 +61,11 @@ struct AppData
     VkDescriptorSetLayout descriptorSetLayout{VK_NULL_HANDLE};
     VkDescriptorPool descriptorPool{VK_NULL_HANDLE};
     std::vector<VkDescriptorSet> descriptorSets{};
+    
+    VkPipelineLayout pipelineLayout{VK_NULL_HANDLE};
+    VkRenderPass renderPass{VK_NULL_HANDLE};
+    VkPipeline wireframePipeline{VK_NULL_HANDLE};
+    VkPipeline solidPipeline{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
