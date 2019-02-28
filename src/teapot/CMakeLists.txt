@@ -29,10 +29,12 @@ target_sources(teapot PRIVATE
         src/vulkan/create_render_pass.cpp
         src/vulkan/create_shader_modules.cpp
         src/vulkan/create_surface.cpp
+        src/vulkan/create_swap_chain.cpp
         src/vulkan/create_vertex_buffer.cpp
         src/vulkan/get_device_qeues.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
+        src/vulkan/get_surface_extent.cpp
         src/vulkan/teapot_vulkan.h
         src/vulkan/vulkan_debug_callback.cpp
 

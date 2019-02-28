@@ -66,6 +66,8 @@ struct AppData
     VkRenderPass renderPass{VK_NULL_HANDLE};
     VkPipeline wireframePipeline{VK_NULL_HANDLE};
     VkPipeline solidPipeline{VK_NULL_HANDLE};
+    
+    VkSwapchainKHR swapchain{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

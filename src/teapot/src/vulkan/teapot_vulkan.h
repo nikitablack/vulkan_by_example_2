@@ -18,10 +18,12 @@ MaybeAppDataPtr create_pipelines(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_render_pass(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_shader_modules(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_surface(AppDataPtr appData) noexcept;
+MaybeAppDataPtr create_swap_chain(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_vertex_buffer(AppDataPtr appData) noexcept;
 AppDataPtr get_device_qeues(AppDataPtr appData) noexcept;
 MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept;
 AppDataPtr get_required_window_extensions(AppDataPtr appData) noexcept;
+AppDataPtr get_surface_extent(AppDataPtr appData) noexcept;
 
 VkBool32 vulkan_debug_callback(VkDebugUtilsMessageSeverityFlagBitsEXT const messageSeverity,
                                VkDebugUtilsMessageTypeFlagsEXT const messageType,

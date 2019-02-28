@@ -20,6 +20,7 @@ int main()
     AppDataPtr appData{std::make_unique<AppData>()};
     
     appData->layers.push_back("VK_LAYER_LUNARG_standard_validation");
+    appData->deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     appData->instanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -45,7 +46,9 @@ int main()
                    .and_then(allocate_and_update_descriptor_sets)
                    .and_then(create_pipeline_layout)
                    .and_then(create_render_pass)
-                   .and_then(create_pipelines)};
+                   .and_then(create_pipelines)
+                   .map(get_surface_extent)
+                   .and_then(create_swap_chain)};
     
     if (!mbAppData)
     {
