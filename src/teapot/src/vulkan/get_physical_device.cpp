@@ -197,6 +197,9 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
             
             vkGetPhysicalDeviceProperties(appData->physicalDevice, &appData->physicalDeviceProperties);
             
+            if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(appData->physicalDevice, appData->surface, &appData->surfaceCapabilities) != VK_SUCCESS)
+                throw std::runtime_error{"failed to fet physical device surface capabilities"};
+            
             return std::move(appData);
         }
         catch (std::runtime_error const & /*error*/)
