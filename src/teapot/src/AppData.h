@@ -68,6 +68,9 @@ struct AppData
     VkPipeline solidPipeline{VK_NULL_HANDLE};
     
     VkSwapchainKHR swapchain{VK_NULL_HANDLE};
+    std::vector<VkImage> swapchainImages{};
+    std::vector<VkImageView> swapchainImageViews{};
+    std::vector<VkFramebuffer> framebuffers{};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

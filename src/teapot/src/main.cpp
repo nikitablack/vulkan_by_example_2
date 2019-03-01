@@ -48,7 +48,9 @@ int main()
                    .and_then(create_render_pass)
                    .and_then(create_pipelines)
                    .map(get_surface_extent)
-                   .and_then(create_swap_chain)};
+                   .and_then(create_swap_chain)
+                   .and_then(get_swapchain_images_and_views)
+                   .and_then(create_framebuffers)};
     
     if (!mbAppData)
     {

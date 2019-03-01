@@ -7,6 +7,7 @@ AppDataPtr clean(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_debug_utils_messenger(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_descriptor_pool(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_descriptor_set_layout(AppDataPtr appData) noexcept;
+MaybeAppDataPtr create_framebuffers(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_index_buffer(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_instance(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept;
@@ -24,6 +25,7 @@ AppDataPtr get_device_qeues(AppDataPtr appData) noexcept;
 MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept;
 AppDataPtr get_required_window_extensions(AppDataPtr appData) noexcept;
 AppDataPtr get_surface_extent(AppDataPtr appData) noexcept;
+MaybeAppDataPtr get_swapchain_images_and_views(AppDataPtr appData) noexcept;
 
 VkBool32 vulkan_debug_callback(VkDebugUtilsMessageSeverityFlagBitsEXT const messageSeverity,
                                VkDebugUtilsMessageTypeFlagsEXT const messageType,

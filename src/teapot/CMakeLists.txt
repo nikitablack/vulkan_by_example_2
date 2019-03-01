@@ -19,6 +19,7 @@ target_sources(teapot PRIVATE
         src/vulkan/create_debug_utils_messenger.cpp
         src/vulkan/create_descriptor_pool.cpp
         src/vulkan/create_descriptor_set_layout.cpp
+        src/vulkan/create_framebuffers.cpp
         src/vulkan/create_index_buffer.cpp
         src/vulkan/create_instance.cpp
         src/vulkan/create_logical_device.cpp
@@ -29,12 +30,13 @@ target_sources(teapot PRIVATE
         src/vulkan/create_render_pass.cpp
         src/vulkan/create_shader_modules.cpp
         src/vulkan/create_surface.cpp
-        src/vulkan/create_swap_chain.cpp
+        src/vulkan/create_swapchain.cpp
         src/vulkan/create_vertex_buffer.cpp
         src/vulkan/get_device_qeues.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
         src/vulkan/get_surface_extent.cpp
+        src/vulkan/get_swapchain_images_and_views.cpp
         src/vulkan/teapot_vulkan.h
         src/vulkan/vulkan_debug_callback.cpp
 

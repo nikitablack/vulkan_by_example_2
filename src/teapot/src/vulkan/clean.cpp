@@ -5,6 +5,26 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    for(auto const framebuffer : appData->framebuffers)
+        vkDestroyFramebuffer(appData->device, framebuffer, nullptr);
+    
+    appData->framebuffers.clear();
+    
+    for(auto const imageView : appData->swapchainImageViews)
+        vkDestroyImageView(appData->device, imageView, nullptr);
+    
+    appData->swapchainImageViews.clear();
+    
+    auto const destroySwapChainFunc{reinterpret_cast<PFN_vkDestroySwapchainKHR>(vkGetInstanceProcAddr(appData->instance, "vkDestroySwapchainKHR"))};
+    
+    if (destroySwapChainFunc)
+    {
+        destroySwapChainFunc(appData->device, appData->swapchain, nullptr);
+        appData->swapchain = VK_NULL_HANDLE;
+    }
+    
+    appData->swapchainImages.clear();
+    
     vkDestroyRenderPass(appData->device, appData->renderPass, nullptr);
     appData->renderPass = VK_NULL_HANDLE;
     
