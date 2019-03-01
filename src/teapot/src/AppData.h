@@ -20,7 +20,6 @@ struct AppData
     GLFWwindow * window{nullptr};
     VkInstance instance{VK_NULL_HANDLE};
     VkSurfaceKHR surface{VK_NULL_HANDLE};
-    VkSurfaceCapabilitiesKHR surfaceCapabilities{};
     VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
     uint32_t graphicsFamilyQueueIndex{0};
     uint32_t presentFamilyQueueIndex{0};
