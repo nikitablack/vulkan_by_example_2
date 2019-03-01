@@ -13,7 +13,6 @@ struct GLFWwindow;
 struct AppData
 {
     GLFWwindow * window{nullptr};
-    bool framebufferResized{false};
     
     TeapotData teapotData{};
     
