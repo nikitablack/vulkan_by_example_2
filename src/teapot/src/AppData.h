@@ -12,18 +12,15 @@ struct GLFWwindow;
 
 struct AppData
 {
-    GLFWwindow * window{nullptr};
-    
     TeapotData teapotData{};
-    
     std::vector<char const *> layers{};
     std::vector<char const *> instanceExtensions{};
     std::vector<char const *> deviceExtensions{};
     PFN_vkDebugUtilsMessengerCallbackEXT debugCallback{nullptr};
     
+    GLFWwindow * window{nullptr};
     VkInstance instance{VK_NULL_HANDLE};
     VkSurfaceKHR surface{VK_NULL_HANDLE};
-    VkSurfaceCapabilitiesKHR surfaceCapabilities{};
     VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
     uint32_t graphicsFamilyQueueIndex{0};
     uint32_t presentFamilyQueueIndex{0};
