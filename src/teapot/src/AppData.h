@@ -11,9 +11,9 @@ struct GLFWwindow;
 
 struct AppData
 {
-    GLFWwindow * window{nullptr};
-    
     TeapotData teapotData{};
+    
+    GLFWwindow * window{nullptr};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;
