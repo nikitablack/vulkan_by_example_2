@@ -15,7 +15,7 @@ void on_key_press(GLFWwindow * const /*window*/, int const key, int const /*scan
     }
     else if (key == GLFW_KEY_KP_SUBTRACT && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
-        tesselationLevel = std::max(tesselationLevel - 0.1f, 64.0f);
+        tesselationLevel = std::max(tesselationLevel - 0.1f, 0.0f);
     }
     else if (key == GLFW_KEY_SPACE && (action == GLFW_RELEASE))
     {
