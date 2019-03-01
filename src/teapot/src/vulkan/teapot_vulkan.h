@@ -24,7 +24,6 @@ MaybeAppDataPtr create_vertex_buffer(AppDataPtr appData) noexcept;
 AppDataPtr get_device_qeues(AppDataPtr appData) noexcept;
 MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept;
 AppDataPtr get_required_window_extensions(AppDataPtr appData) noexcept;
-AppDataPtr get_surface_extent(AppDataPtr appData) noexcept;
 MaybeAppDataPtr get_swapchain_images_and_views(AppDataPtr appData) noexcept;
 
 VkBool32 vulkan_debug_callback(VkDebugUtilsMessageSeverityFlagBitsEXT const messageSeverity,

@@ -35,7 +35,6 @@ target_sources(teapot PRIVATE
         src/vulkan/get_device_qeues.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
-        src/vulkan/get_surface_extent.cpp
         src/vulkan/get_swapchain_images_and_views.cpp
         src/vulkan/teapot_vulkan.h
         src/vulkan/vulkan_debug_callback.cpp
