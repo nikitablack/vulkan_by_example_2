@@ -47,10 +47,13 @@ int main()
                    .and_then(create_pipeline_layout)
                    .and_then(create_render_pass)
                    .and_then(create_pipelines)
-                   .map(get_surface_extent)
                    .and_then(create_swap_chain)
                    .and_then(get_swapchain_images_and_views)
-                   .and_then(create_framebuffers)};
+                   .and_then(create_framebuffers)
+                   .and_then(create_semaphores)
+                   .and_then(create_fences)
+                   .and_then(create_command_pool)
+                   .and_then(allocate_command_buffers)};
     
     if (!mbAppData)
     {
@@ -65,10 +68,31 @@ int main()
     
     while (!glfwWindowShouldClose(appData->window))
     {
+        mbAppData = draw(std::move(appData));
+        
+        if(!mbAppData)
+        {
+            std::cout << mbAppData.error().message << std::endl;
+    
+            appData = std::move(mbAppData.error().appData);
+            
+            if(vkDeviceWaitIdle(appData->device) == VK_SUCCESS)
+                appData = clean(std::move(appData));
+            else
+                std::cout << "failed to wait idle device" << std::endl;
+    
+            return 1;
+        }
+        
+        appData = std::move(*mbAppData);
+        
         glfwPollEvents();
     }
     
-    appData = clean(std::move(appData));
+    if(vkDeviceWaitIdle(appData->device) == VK_SUCCESS)
+        appData = clean(std::move(appData));
+    else
+        std::cout << "failed to wait idle device" << std::endl;
     
     return 0;
 }

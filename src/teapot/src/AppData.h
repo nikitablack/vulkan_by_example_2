@@ -24,7 +24,7 @@ struct AppData
     
     VkInstance instance{VK_NULL_HANDLE};
     VkSurfaceKHR surface{VK_NULL_HANDLE};
-    VkSurfaceCapabilitiesKHR surfaceCapabilities{};
+    //VkSurfaceCapabilitiesKHR surfaceCapabilities{};
     VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
     uint32_t graphicsFamilyQueueIndex{0};
     uint32_t presentFamilyQueueIndex{0};
@@ -70,6 +70,13 @@ struct AppData
     std::vector<VkImage> swapchainImages{};
     std::vector<VkImageView> swapchainImageViews{};
     std::vector<VkFramebuffer> framebuffers{};
+    
+    VkSemaphore imageAvailableSemaphore{VK_NULL_HANDLE};
+    VkSemaphore presentFinishedSemaphore{VK_NULL_HANDLE};
+    std::vector<VkFence> fences{};
+    VkCommandPool commandPool{VK_NULL_HANDLE};
+    std::vector<VkCommandBuffer> commandBuffers{};
+    uint32_t currentResourceIndex{0};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

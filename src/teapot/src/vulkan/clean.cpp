@@ -5,6 +5,20 @@
 
 AppDataPtr clean(AppDataPtr appData) noexcept
 {
+    for(auto const fence : appData->fences)
+        vkDestroyFence(appData->device, fence, nullptr);
+    
+    appData->fences.clear();
+    
+    vkDestroyCommandPool(appData->device, appData->commandPool, nullptr);
+    appData->commandPool = VK_NULL_HANDLE;
+    
+    vkDestroySemaphore(appData->device, appData->imageAvailableSemaphore, nullptr);
+    appData->imageAvailableSemaphore = VK_NULL_HANDLE;
+    
+    vkDestroySemaphore(appData->device, appData->presentFinishedSemaphore, nullptr);
+    appData->presentFinishedSemaphore = VK_NULL_HANDLE;
+    
     for(auto const framebuffer : appData->framebuffers)
         vkDestroyFramebuffer(appData->device, framebuffer, nullptr);
     
