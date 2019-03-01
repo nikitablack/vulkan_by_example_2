@@ -12,14 +12,12 @@ struct GLFWwindow;
 
 struct AppData
 {
-    GLFWwindow * window{nullptr};
-    
     TeapotData teapotData{};
-    
     std::vector<char const *> layers{};
     std::vector<char const *> instanceExtensions{};
     std::vector<char const *> deviceExtensions{};
     
+    GLFWwindow * window{nullptr};
     VkInstance instance{VK_NULL_HANDLE};
     VkSurfaceKHR surface{VK_NULL_HANDLE};
     VkSurfaceCapabilitiesKHR surfaceCapabilities{};
