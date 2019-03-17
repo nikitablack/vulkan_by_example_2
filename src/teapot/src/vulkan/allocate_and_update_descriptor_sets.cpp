@@ -82,7 +82,7 @@ MaybeAppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData) noexcept
     info.descriptorSetCount = 2;
     info.pSetLayouts = descriptorSetLayouts.data();
     
-    appData->descriptorSets.reserve(2);
+    appData->descriptorSets.resize(2);
     
     if (vkAllocateDescriptorSets(appData->device, &info, appData->descriptorSets.data()) != VK_SUCCESS)
         return tl::make_unexpected(AppDataError{"failed to allocate descriptor set", std::move(appData)});
