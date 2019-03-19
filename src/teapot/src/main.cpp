@@ -45,7 +45,7 @@ int main()
     {
         std::cout << mbAppData.error().message << std::endl;
     
-        appData = clean(std::move(appData));
+        appData = clean(std::move(mbAppData.error().appData));
         
         return 1;
     }
