@@ -73,7 +73,9 @@ MaybeAppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData) noexcept
 {
     assert(appData->descriptorSets.empty());
     
-    std::array<VkDescriptorSetLayout, 2> descriptorSetLayouts{appData->descriptorSetLayout, appData->descriptorSetLayout};
+    std::array<VkDescriptorSetLayout, numConcurrentResources> descriptorSetLayouts{};
+    
+    descriptorSetLayouts.fill(appData->descriptorSetLayout);
     
     VkDescriptorSetAllocateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
