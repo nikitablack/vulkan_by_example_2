@@ -79,29 +79,24 @@ MaybeAppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData) noexcept
     info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     info.pNext = nullptr;
     info.descriptorPool = appData->descriptorPool;
-    info.descriptorSetCount = 2;
+    info.descriptorSetCount = numConcurrentResources;
     info.pSetLayouts = descriptorSetLayouts.data();
     
-    appData->descriptorSets.resize(2);
+    appData->descriptorSets.resize(numConcurrentResources);
     
     if (vkAllocateDescriptorSets(appData->device, &info, appData->descriptorSets.data()) != VK_SUCCESS)
         return tl::make_unexpected(AppDataError{"failed to allocate descriptor set", std::move(appData)});
     
-    update_set(appData->device,
-               appData->descriptorSets[0],
-               appData->patchBuffer,
-               appData->projMatrixBuffer,
-               appData->viewMatrixBuffer,
-               appData->modelMatrixBuffer,
-               0);
-    
-    update_set(appData->device,
-               appData->descriptorSets[1],
-               appData->patchBuffer,
-               appData->projMatrixBuffer,
-               appData->viewMatrixBuffer,
-               appData->modelMatrixBuffer,
-               appData->matrixBufferOffset);
+    for (uint32_t i{ 0 }; i < numConcurrentResources; ++i)
+    {
+        update_set(appData->device,
+            appData->descriptorSets[i],
+            appData->patchBuffer,
+            appData->projMatrixBuffer,
+            appData->viewMatrixBuffer,
+            appData->modelMatrixBuffer,
+            appData->matrixBufferOffset * i);
+    }
     
     return std::move(appData);
 }
