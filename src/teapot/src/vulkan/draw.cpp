@@ -108,10 +108,10 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
         return tl::make_unexpected(AppDataError{"failed to map uniform buffer memory", std::move(appData)});
 
     update_projection_matrix(static_cast<float>(appData->surfaceExtent.width) / static_cast<float>(appData->surfaceExtent.height), static_cast<char *>(mappedMatrixBuffersMemory) + appData->currentResourceIndex * appData->matrixBufferOffset);
-    update_view_matrix(static_cast<char *>(mappedMatrixBuffersMemory) + 512 + appData->currentResourceIndex * appData->matrixBufferOffset);
+    update_view_matrix(static_cast<char *>(mappedMatrixBuffersMemory) + appData->matrixBufferSizeAligned + appData->currentResourceIndex * appData->matrixBufferOffset);
     
     static uint32_t n{0};
-    update_model_matrix(n++, static_cast<char *>(mappedMatrixBuffersMemory) + 512 * 2 + appData->currentResourceIndex * appData->matrixBufferOffset);
+    update_model_matrix(n++, static_cast<char *>(mappedMatrixBuffersMemory) + appData->matrixBufferSizeAligned * 2 + appData->currentResourceIndex * appData->matrixBufferOffset);
 
     VkBufferMemoryBarrier projBufferMemoryBarrier{};
     projBufferMemoryBarrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
