@@ -71,7 +71,8 @@ set_target_properties(teapot PROPERTIES
 
 target_compile_options(teapot PRIVATE ${CXXCOMPILEOPTIONS})
 
-target_compile_definitions(teapot PRIVATE ENABLE_VULKAN_DEBUG_UTILS)
+target_compile_definitions(teapot PRIVATE ENABLE_VULKAN_DEBUG_UTILS
+        _SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING) # needed to compile Eigen with c++17 in VisualStudio
 
 target_link_libraries(teapot PRIVATE
         eigen

@@ -26,7 +26,7 @@ MaybeAppDataPtr create_patch_buffer(AppDataPtr appData) noexcept
     bufferData->device = appData->device;
     bufferData->physicalDevice = appData->physicalDevice;
     bufferData->dataSize = sizeof(decltype(patchData)::value_type) * patchData.size();
-    bufferData->data = appData->teapotData.patches.data();
+    bufferData->data = patchData.data();
     bufferData->localDeviceBufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
     bufferData->copyQueueFamilyIndex = appData->graphicsFamilyQueueIndex;
     bufferData->copyQueue = appData->graphicsQueue;
