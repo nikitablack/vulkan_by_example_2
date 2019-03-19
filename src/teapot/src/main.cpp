@@ -11,7 +11,6 @@
 bool framebufferResized{false};
 bool solidMode{true};
 float tesselationLevel{1.0};
-uint32_t numConcurrentResources{2};
 
 static_assert(sizeof(float) == shaderDataSize, "expected float to be 4 bytes");
 
