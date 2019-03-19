@@ -52,6 +52,7 @@ struct AppData
     VkBuffer viewMatrixBuffer{};
     VkBuffer modelMatrixBuffer{};
     VkDeviceMemory matrixBuffersDeviceMemory{VK_NULL_HANDLE};
+    VkDeviceSize matrixBufferSizeAligned{};
     VkDeviceSize matrixBufferOffset{};
     
     VkDescriptorSetLayout descriptorSetLayout{VK_NULL_HANDLE};
