@@ -22,7 +22,7 @@ MaybeAppDataPtr resize_swapchain(AppDataPtr appData) noexcept
                    .and_then(create_framebuffers)};
     
     if (!mbAppData)
-        mbAppData;
+        return mbAppData;
     
     appData = std::move(*mbAppData);
     

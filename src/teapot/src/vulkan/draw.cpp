@@ -56,7 +56,7 @@ void update_view_matrix(char * const memPtr)
 
 Matrix4 model(uint32_t const n)
 {
-    Eigen::AngleAxis<float> const aa{n * 0.001f, Eigen::Vector3f{0.0f, 0.0f, 1.0f}};
+    Eigen::AngleAxis<float> const aa{static_cast<float>(n) * 0.001f, Eigen::Vector3f{0.0f, 0.0f, 1.0f}};
     Eigen::Matrix3f const r{aa.toRotationMatrix()};
     
     Matrix4 mat{ Matrix4::Identity() };
