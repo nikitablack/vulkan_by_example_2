@@ -167,6 +167,25 @@ std::tuple<uint32_t, uint32_t> get_device_graphics_and_present_queue_families(Vk
     return std::make_tuple(static_cast<uint32_t>(graphicsQueueIndex), static_cast<uint32_t>(presentQueueIndex));
 }
 
+VkFormat get_depth_format(VkPhysicalDevice const physicalDevice)
+{
+    std::array<VkFormat, 3> formatCandidates{VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D16_UNORM_S8_UINT};
+    
+    for (auto const format : formatCandidates)
+    {
+        VkFormatProperties formatProperties{};
+        
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
+        
+        if (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+        {
+            return format;
+        }
+    }
+    
+    throw std::runtime_error{"failed to find depth format"};
+}
+
 }
 
 MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
@@ -189,10 +208,12 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
             auto const surfaceFormat{get_device_surface_format(d, appData->surface)};
             auto const surfacePresentMode{get_device_surface_present_mode(d, appData->surface)};
             auto const queueFamilies{get_device_graphics_and_present_queue_families(d, appData->surface)};
+            auto const depthFormat{get_depth_format(d)};
             
             appData->physicalDevice = d;
             appData->surfacePresentMode = surfacePresentMode;
             appData->surfaceFormat = surfaceFormat;
+            appData->depthFormat = depthFormat;
             std::tie(appData->graphicsFamilyQueueIndex, appData->presentFamilyQueueIndex) = queueFamilies;
             
             vkGetPhysicalDeviceProperties(appData->physicalDevice, &appData->physicalDeviceProperties);

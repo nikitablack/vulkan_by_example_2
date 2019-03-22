@@ -7,6 +7,7 @@ MaybeAppDataPtr allocate_command_buffers(AppDataPtr appData) noexcept;
 AppDataPtr clean(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_command_pool(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_debug_utils_messenger(AppDataPtr appData) noexcept;
+MaybeAppDataPtr create_depth_buffer_and_view(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_descriptor_pool(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_descriptor_set_layout(AppDataPtr appData) noexcept;
 MaybeAppDataPtr create_fences(AppDataPtr appData) noexcept;

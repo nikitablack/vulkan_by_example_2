@@ -75,6 +75,11 @@ struct AppData
     VkCommandPool commandPool{VK_NULL_HANDLE};
     std::vector<VkCommandBuffer> commandBuffers{};
     uint32_t currentResourceIndex{0};
+    
+    VkFormat depthFormat{};
+    VkImage depthImage{VK_NULL_HANDLE};
+    VkImageView depthImageView{VK_NULL_HANDLE};
+    VkDeviceMemory depthImageMemory{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

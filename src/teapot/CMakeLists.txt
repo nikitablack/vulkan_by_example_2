@@ -19,6 +19,7 @@ target_sources(teapot PRIVATE
         src/vulkan/clean.cpp
         src/vulkan/create_command_pool.cpp
         src/vulkan/create_debug_utils_messenger.cpp
+        src/vulkan/create_depth_buffer_and_view.cpp
         src/vulkan/create_descriptor_pool.cpp
         src/vulkan/create_descriptor_set_layout.cpp
         src/vulkan/create_fences.cpp

@@ -12,13 +12,15 @@ MaybeAppDataPtr create_framebuffers(AppDataPtr appData) noexcept
     
     for(size_t i{0}; i < appData->swapchainImageViews.size(); ++i)
     {
+        std::array<VkImageView, 2> attachments{appData->swapchainImageViews[i], appData->depthImageView};
+        
         VkFramebufferCreateInfo info{};
         info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         info.pNext = nullptr;
         info.flags = 0;
         info.renderPass = appData->renderPass;
-        info.attachmentCount = 1;
-        info.pAttachments = &appData->swapchainImageViews[i];
+        info.attachmentCount = static_cast<uint32_t>(attachments.size());
+        info.pAttachments = attachments.data();
         info.width = appData->surfaceExtent.width;
         info.height = appData->surfaceExtent.height;
         info.layers = 1;
