@@ -144,8 +144,9 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
     clearColorValue.float32[2] = 0.5f;
     clearColorValue.float32[3] = 1.0f;
     
-    VkClearValue clearValue{};
-    clearValue.color = clearColorValue;
+    std::array<VkClearValue, 2> clearValues{};
+    clearValues[0].color = clearColorValue;
+    clearValues[1].depthStencil = VkClearDepthStencilValue{1.0f, 0};
     
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -153,8 +154,8 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
     renderPassBeginInfo.renderPass = appData->renderPass;
     renderPassBeginInfo.framebuffer = appData->framebuffers[imageIndex];
     renderPassBeginInfo.renderArea = VkRect2D{VkOffset2D{0, 0}, appData->surfaceExtent};
-    renderPassBeginInfo.clearValueCount = 1;
-    renderPassBeginInfo.pClearValues = &clearValue;
+    renderPassBeginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    renderPassBeginInfo.pClearValues = clearValues.data();
     
     vkCmdBeginRenderPass(currentCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
     

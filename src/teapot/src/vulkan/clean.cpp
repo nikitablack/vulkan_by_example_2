@@ -7,6 +7,15 @@ AppDataPtr clean(AppDataPtr appData) noexcept
 {
     if (appData->device)
     {
+        vkDestroyImage(appData->device, appData->depthImage, nullptr);
+        appData->depthImage = VK_NULL_HANDLE;
+
+        vkDestroyImageView(appData->device, appData->depthImageView, nullptr);
+        appData->depthImageView = VK_NULL_HANDLE;
+
+        vkFreeMemory(appData->device, appData->depthImageMemory, nullptr);
+        appData->depthImageMemory = VK_NULL_HANDLE;
+
         for (auto const fence : appData->fences)
             vkDestroyFence(appData->device, fence, nullptr);
 

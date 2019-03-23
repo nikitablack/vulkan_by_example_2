@@ -27,7 +27,7 @@ MaybeAppDataPtr create_image(AppDataPtr appData) noexcept
     info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     info.queueFamilyIndexCount = 0;
     info.pQueueFamilyIndices = nullptr;
-    info.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     
     if (vkCreateImage(appData->device, &info, nullptr, &appData->depthImage) != VK_SUCCESS)
         return tl::make_unexpected(AppDataError{"failed to create depth image", std::move(appData)});
@@ -106,7 +106,7 @@ MaybeAppDataPtr create_image_view(AppDataPtr appData) noexcept
                                 appData->device,
                                 VK_OBJECT_TYPE_IMAGE_VIEW,
                                 reinterpret_cast<uint64_t>(appData->depthImageView),
-                                "depth image view ");
+                                "depth image view");
 #endif
     
     return std::move(appData);
