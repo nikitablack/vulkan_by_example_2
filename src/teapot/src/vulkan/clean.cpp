@@ -7,10 +7,15 @@ AppDataPtr clean(AppDataPtr appData) noexcept
 {
     if (appData->device)
     {
-        for (auto const fence : appData->fences)
+        for (auto const fence : appData->graphicsFences)
             vkDestroyFence(appData->device, fence, nullptr);
 
-        appData->fences.clear();
+        appData->graphicsFences.clear();
+    
+        for (auto const fence : appData->presentFences)
+            vkDestroyFence(appData->device, fence, nullptr);
+    
+        appData->presentFences.clear();
 
         vkDestroyCommandPool(appData->device, appData->commandPool, nullptr);
         appData->commandPool = VK_NULL_HANDLE;
@@ -18,8 +23,11 @@ AppDataPtr clean(AppDataPtr appData) noexcept
         vkDestroySemaphore(appData->device, appData->imageAvailableSemaphore, nullptr);
         appData->imageAvailableSemaphore = VK_NULL_HANDLE;
 
-        vkDestroySemaphore(appData->device, appData->presentFinishedSemaphore, nullptr);
-        appData->presentFinishedSemaphore = VK_NULL_HANDLE;
+        vkDestroySemaphore(appData->device, appData->graphicsFinishedSemaphore, nullptr);
+        appData->graphicsFinishedSemaphore = VK_NULL_HANDLE;
+    
+        vkDestroySemaphore(appData->device, appData->queueOwnershipChangedSemaphore, nullptr);
+        appData->queueOwnershipChangedSemaphore = VK_NULL_HANDLE;
 
         for (auto const framebuffer : appData->framebuffers)
             vkDestroyFramebuffer(appData->device, framebuffer, nullptr);

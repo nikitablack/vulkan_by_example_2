@@ -70,10 +70,13 @@ struct AppData
     std::vector<VkFramebuffer> framebuffers{};
     
     VkSemaphore imageAvailableSemaphore{VK_NULL_HANDLE};
-    VkSemaphore presentFinishedSemaphore{VK_NULL_HANDLE};
-    std::vector<VkFence> fences{};
+    VkSemaphore graphicsFinishedSemaphore{VK_NULL_HANDLE};
+    VkSemaphore queueOwnershipChangedSemaphore{VK_NULL_HANDLE};
+    std::vector<VkFence> graphicsFences{};
+    std::vector<VkFence> presentFences{};
     VkCommandPool commandPool{VK_NULL_HANDLE};
-    std::vector<VkCommandBuffer> commandBuffers{};
+    std::vector<VkCommandBuffer> graphicsCommandBuffers{};
+    std::vector<VkCommandBuffer> presentCommandBuffers{};
     uint32_t currentResourceIndex{0};
 };
 
