@@ -25,7 +25,7 @@ MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept
         queueCreateInfo.pNext = nullptr;
         queueCreateInfo.flags = 0;
         queueCreateInfo.queueFamilyIndex = queueIndices[i];
-        queueCreateInfo.queueCount = static_cast<uint32_t>(queueNumAndPriorities.size());
+        queueCreateInfo.queueCount = static_cast<uint32_t>(queueNumAndPriorities[i].size());
         queueCreateInfo.pQueuePriorities = queueNumAndPriorities[i].data();
         
         queueCreateInfos.push_back(queueCreateInfo);
