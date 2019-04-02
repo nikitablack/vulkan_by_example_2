@@ -26,8 +26,11 @@ AppDataPtr clean(AppDataPtr appData) noexcept
     
         appData->presentFences.clear();
 
-        vkDestroyCommandPool(appData->device, appData->commandPool, nullptr);
-        appData->commandPool = VK_NULL_HANDLE;
+        vkDestroyCommandPool(appData->device, appData->graphicsCommandPool, nullptr);
+        appData->graphicsCommandPool = VK_NULL_HANDLE;
+    
+        vkDestroyCommandPool(appData->device, appData->presentCommandPool, nullptr);
+        appData->presentCommandPool = VK_NULL_HANDLE;
 
         vkDestroySemaphore(appData->device, appData->imageAvailableSemaphore, nullptr);
         appData->imageAvailableSemaphore = VK_NULL_HANDLE;

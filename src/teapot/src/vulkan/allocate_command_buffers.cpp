@@ -12,7 +12,7 @@ MaybeAppDataPtr allocate_command_buffers(AppDataPtr appData) noexcept
     VkCommandBufferAllocateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     info.pNext = nullptr;
-    info.commandPool = appData->commandPool;
+    info.commandPool = appData->graphicsCommandPool;
     info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     info.commandBufferCount = numConcurrentResources;
     
@@ -34,6 +34,8 @@ MaybeAppDataPtr allocate_command_buffers(AppDataPtr appData) noexcept
     
     if(appData->graphicsFamilyQueueIndex != appData->presentFamilyQueueIndex)
     {
+        info.commandPool = appData->presentCommandPool;
+        
         appData->presentCommandBuffers.resize(numConcurrentResources);
     
         if (vkAllocateCommandBuffers(appData->device, &info, appData->presentCommandBuffers.data()) != VK_SUCCESS)
