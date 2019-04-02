@@ -74,7 +74,8 @@ struct AppData
     VkSemaphore queueOwnershipChangedSemaphore{VK_NULL_HANDLE};
     std::vector<VkFence> graphicsFences{};
     std::vector<VkFence> presentFences{};
-    VkCommandPool commandPool{VK_NULL_HANDLE};
+    VkCommandPool graphicsCommandPool{VK_NULL_HANDLE};
+    VkCommandPool presentCommandPool{VK_NULL_HANDLE};
     std::vector<VkCommandBuffer> graphicsCommandBuffers{};
     std::vector<VkCommandBuffer> presentCommandBuffers{};
     uint32_t currentResourceIndex{0};
