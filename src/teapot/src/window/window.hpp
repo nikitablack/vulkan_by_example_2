@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AppData.h"
+#include "AppData.hpp"
 
 struct GLFWwindow;
 

@@ -1,5 +1,5 @@
-#include "utils/error_message.h"
-#include "teapot_window.h"
+#include "utils/error_message.hpp"
+#include "window.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>

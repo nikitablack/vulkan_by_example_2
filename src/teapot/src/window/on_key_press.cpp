@@ -1,5 +1,5 @@
-#include "teapot_window.h"
-#include "Global.h"
+#include "window.hpp"
+#include "Global.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>

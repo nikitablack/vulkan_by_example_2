@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TeapotData.h"
+#include "TeapotData.hpp"
 
 #include <exception>
 #include <memory>
