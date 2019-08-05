@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 find_package(Vulkan REQUIRED)
 
-add_executable(teapot "")
+add_executable(teapot "" src/utils/error_message.h)
 
 target_sources(teapot PRIVATE
+        src/utils/error_message.h
+
         src/window/create_window.cpp
         src/window/framebuffer_size_callback.cpp
         src/window/on_key_press.cpp
@@ -34,7 +36,6 @@ target_compile_options(teapot PRIVATE ${CXXCOMPILEOPTIONS})
 target_link_libraries(teapot PRIVATE
         eigen
         glfw
-        tl
         ${Vulkan_LIBRARIES}
         )
 

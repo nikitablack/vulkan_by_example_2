@@ -2,8 +2,7 @@
 
 #include "TeapotData.h"
 
-#include <tl/expected.hpp>
-
+#include <exception>
 #include <memory>
 #include <string>
 
@@ -18,10 +17,16 @@ struct AppData
 
 using AppDataPtr = std::unique_ptr<AppData>;
 
-struct AppDataError
+struct AppDataError : public std::exception
 {
+    AppDataError(std::string msg, AppDataPtr ptr) : message{std::move(msg)}, appData{std::move(ptr)}
+    {}
+
+    const char * what() const noexcept override
+    {
+        return message.c_str();
+    }
+
     std::string message{};
     AppDataPtr appData{};
 };
-
-using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;
