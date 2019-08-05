@@ -1,10 +1,10 @@
 #pragma once
 
-#include "TeapotData.h"
+#include "TeapotData.hpp"
 
-#include <tl/expected.hpp>
 #include "vulkan/vulkan.h"
 
+#include <exception>
 #include <memory>
 #include <string>
 
@@ -17,7 +17,7 @@ struct AppData
     std::vector<char const *> instanceExtensions{};
     std::vector<char const *> deviceExtensions{};
     
-    GLFWwindow * window{nullptr};
+    GLFWwindow *window{nullptr};
     VkInstance instance{VK_NULL_HANDLE};
     VkSurfaceKHR surface{VK_NULL_HANDLE};
     VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
@@ -38,10 +38,16 @@ struct AppData
 
 using AppDataPtr = std::unique_ptr<AppData>;
 
-struct AppDataError
+struct AppDataError : public std::exception
 {
+    AppDataError(std::string msg, AppData ptr) : message{std::move(msg)}, appData{std::move(ptr)}
+    {}
+    
+    const char *what() const noexcept override
+    {
+        return message.c_str();
+    }
+    
     std::string message{};
-    AppDataPtr appData{};
+    AppData appData{};
 };
-
-using MaybeAppDataPtr = tl::expected<AppDataPtr, AppDataError>;

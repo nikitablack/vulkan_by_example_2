@@ -1,7 +1,6 @@
-#include "vulkan/teapot_vulkan.h"
-#include "window/teapot_window.h"
-#include "AppData.h"
-#include "Global.h"
+#include "vulkan/teapot_vulkan.hpp"
+#include "window/window.hpp"
+#include "AppData.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -12,25 +11,48 @@ bool framebufferResized{false};
 bool solidMode{true};
 float tesselationLevel{1.0};
 
+void handle_error(std::exception const & error, uint32_t const level =  0)
+{
+    std::cout << std::string(level, ' ') << error.what() << '\n';
+    
+    try
+    {
+        std::rethrow_if_nested(error);
+    }
+    catch(std::exception const & nestedError)
+    {
+        handle_error(nestedError, level + 1);
+    }
+    catch(...)
+    {
+        std::cout << "unknown error" << '\n';
+    }
+}
+
 int main()
 {
     AppDataPtr appData{std::make_unique<AppData>()};
     
-    auto mbAppData{create_window(std::move(appData))
-                   .map(get_required_window_extensions)
-                   .and_then(create_instance)
-                   .and_then(create_surface)
-                   .and_then(get_physical_device)
-                   .and_then(create_logical_device)
-                   .and_then(create_shader_modules)};
-    
-    if (!mbAppData)
+    try
     {
-        std::cout << mbAppData.error().message << std::endl;
+        appData = create_window(std::move(appData));
+        appData = get_required_window_extensions(std::move(appData));
+        appData = create_instance(std::move(appData));
+        appData = create_surface(std::move(appData));
+        appData = get_physical_device(std::move(appData));
+        appData = create_logical_device(std::move(appData));
+        appData = create_shader_modules(std::move(appData));
+    }
+    catch (std::exception const & error)
+    {
+        handle_error(error);
         return 1;
     }
-    
-    appData = std::move(*mbAppData);
+    catch (...)
+    {
+        std::cout << "unknown error" << '\n';
+        return 1;
+    }
     
     while (!glfwWindowShouldClose(appData->window))
     {

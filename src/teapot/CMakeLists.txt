@@ -7,23 +7,26 @@ find_package(Vulkan REQUIRED)
 add_executable(teapot "")
 
 target_sources(teapot PRIVATE
+        src/utils/error_message.hpp
+
         src/vulkan/create_instance.cpp
         src/vulkan/create_logical_device.cpp
         src/vulkan/create_shader_modules.cpp
         src/vulkan/create_surface.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
-        src/vulkan/teapot_vulkan.h
+        src/vulkan/teapot_vulkan.hpp
 
         src/window/create_window.cpp
         src/window/framebuffer_size_callback.cpp
         src/window/on_key_press.cpp
-        src/window/teapot_window.h
+        src/window/window.hpp
 
-        src/AppData.h
-        src/Global.h
+        src/AppData.hpp
+        src/Global.hpp
         src/main.cpp
-        src/TeapotData.h)
+        src/TeapotData.hpp
+        )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CXXCOMPILEOPTIONS -Werror -pedantic-errors -Wall -ansi -pedantic -Wextra -Wshadow -Weffc++ -Wconversion -Wsign-conversion)
@@ -44,7 +47,6 @@ target_compile_options(teapot PRIVATE ${CXXCOMPILEOPTIONS})
 target_link_libraries(teapot PRIVATE
         eigen
         glfw
-        tl
         ${Vulkan_LIBRARIES}
         )
 
