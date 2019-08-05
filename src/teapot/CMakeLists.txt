@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 find_package(Vulkan REQUIRED)
 
-add_executable(teapot "" src/utils/error_message.hpp)
+add_executable(teapot "")
 
 target_sources(teapot PRIVATE
         src/utils/error_message.hpp
@@ -15,7 +15,8 @@ target_sources(teapot PRIVATE
         src/AppData.hpp
         src/Global.hpp
         src/main.cpp
-        src/TeapotData.hpp)
+        src/TeapotData.hpp
+        )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CXXCOMPILEOPTIONS -Werror -pedantic-errors -Wall -ansi -pedantic -Wextra -Wshadow -Weffc++ -Wconversion -Wsign-conversion)

@@ -19,7 +19,7 @@ using AppDataPtr = std::unique_ptr<AppData>;
 
 struct AppDataError : public std::exception
 {
-    AppDataError(std::string msg, AppDataPtr ptr) : message{std::move(msg)}, appData{std::move(ptr)}
+    AppDataError(std::string msg, AppData ptr) : message{std::move(msg)}, appData{std::move(ptr)}
     {}
 
     const char * what() const noexcept override
@@ -28,5 +28,5 @@ struct AppDataError : public std::exception
     }
 
     std::string message{};
-    AppDataPtr appData{};
+    AppData appData{};
 };

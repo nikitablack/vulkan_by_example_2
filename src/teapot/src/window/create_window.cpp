@@ -11,17 +11,17 @@ AppDataPtr create_window(AppDataPtr appData)
     assert(!appData->window);
     
     if (!glfwInit())
-        throw AppDataError{ERROR_MESSAGE("failed to init glfw"), std::move(appData)};
+        throw AppDataError{ERROR_MESSAGE("failed to init glfw"), *appData};
     
     if (!glfwVulkanSupported())
-        throw AppDataError{ERROR_MESSAGE("vulkan is not supported"), std::move(appData)};
+        throw AppDataError{ERROR_MESSAGE("vulkan is not supported"), *appData};
     
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     
     GLFWwindow * const window{glfwCreateWindow(800, 600, "Teapot", nullptr, nullptr)};
     if (!window)
-        throw AppDataError{ERROR_MESSAGE("failed to create window"), std::move(appData)};
+        throw AppDataError{ERROR_MESSAGE("failed to create window"), *appData};
     
     appData->window = window;
     

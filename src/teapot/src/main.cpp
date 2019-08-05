@@ -1,6 +1,5 @@
 #include "window/window.hpp"
 #include "AppData.hpp"
-#include "Global.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
