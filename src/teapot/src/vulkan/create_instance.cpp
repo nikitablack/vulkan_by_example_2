@@ -1,8 +1,9 @@
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <cassert>
 
-MaybeAppDataPtr create_instance(AppDataPtr appData) noexcept
+AppDataPtr create_instance(AppDataPtr appData)
 {
     assert(!appData->instance);
     
@@ -17,7 +18,7 @@ MaybeAppDataPtr create_instance(AppDataPtr appData) noexcept
     info.ppEnabledExtensionNames = appData->instanceExtensions.data();
     
     if (vkCreateInstance(&info, nullptr, &appData->instance) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create instance", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to create instance"), *appData};
     
-    return std::move(appData);
+    return appData;
 }
