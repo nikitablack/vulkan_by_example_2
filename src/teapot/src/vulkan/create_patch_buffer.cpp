@@ -46,7 +46,7 @@ AppDataPtr create_patch_buffer(AppDataPtr appData)
         appData->patchBuffer = error.bufferData.buffer;
         appData->patchBufferDeviceMemory = error.bufferData.bufferDeviceMemory;
     
-        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create patch buffer"), *appData});
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create patch buffer"), std::move(*appData.release())});
     }
     
     set_debug_utils_object_name(appData->instance,

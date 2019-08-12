@@ -11,7 +11,7 @@ AppDataPtr create_surface(AppDataPtr appData)
     assert(!appData->surface);
     
     if (glfwCreateWindowSurface(appData->instance, appData->window, nullptr, &appData->surface) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create window surface"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create window surface"), std::move(*appData.release())};
     
     return appData;
 }

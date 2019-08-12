@@ -34,7 +34,7 @@ AppDataPtr create_index_buffer(AppDataPtr appData)
         appData->indexBuffer = error.bufferData.buffer;
         appData->indexBufferDeviceMemory = error.bufferData.bufferDeviceMemory;
         
-        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create index buffer"), *appData});
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create index buffer"), std::move(*appData.release())});
     }
     
     set_debug_utils_object_name(appData->instance,

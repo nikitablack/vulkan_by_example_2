@@ -18,7 +18,7 @@ AppDataPtr create_instance(AppDataPtr appData)
     info.ppEnabledExtensionNames = appData->instanceExtensions.data();
     
     if (vkCreateInstance(&info, nullptr, &appData->instance) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create instance"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create instance"), std::move(*appData.release())};
     
     return appData;
 }

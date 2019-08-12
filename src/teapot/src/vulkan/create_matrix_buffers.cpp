@@ -33,7 +33,7 @@ AppDataPtr create_buffers(AppDataPtr appData)
     info.pQueueFamilyIndices = nullptr;
     
     if (vkCreateBuffer(appData->device, &info, nullptr, &appData->projMatrixBuffer) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create projection matrix buffer"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create projection matrix buffer"), std::move(*appData.release())};
     
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
@@ -42,7 +42,7 @@ AppDataPtr create_buffers(AppDataPtr appData)
                                 "projection matrix buffer");
     
     if (vkCreateBuffer(appData->device, &info, nullptr, &appData->viewMatrixBuffer) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create view matrix buffer"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create view matrix buffer"), std::move(*appData.release())};
     
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
@@ -51,7 +51,7 @@ AppDataPtr create_buffers(AppDataPtr appData)
                                 "view matrix buffer");
     
     if (vkCreateBuffer(appData->device, &info, nullptr, &appData->modelMatrixBuffer) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create model matrix buffer"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create model matrix buffer"), std::move(*appData.release())};
     
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
@@ -84,7 +84,7 @@ AppDataPtr allocate_memory(AppDataPtr appData)
     }
     catch (std::runtime_error const & error)
     {
-        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to find memory index for matrix buffers"), *appData});
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to find memory index for matrix buffers"), std::move(*appData.release())});
     }
     
     VkMemoryAllocateInfo info{};
@@ -94,7 +94,7 @@ AppDataPtr allocate_memory(AppDataPtr appData)
     info.memoryTypeIndex = memPropIndex;
     
     if (vkAllocateMemory(appData->device, &info, nullptr, &appData->matrixBuffersDeviceMemory) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to allocate matrix buffers memory"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to allocate matrix buffers memory"), std::move(*appData.release())};
     
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
@@ -115,13 +115,13 @@ AppDataPtr bind_buffers(AppDataPtr appData)
     vkGetBufferMemoryRequirements(appData->device, appData->modelMatrixBuffer, &memRequirements);
     
     if (vkBindBufferMemory(appData->device, appData->projMatrixBuffer, appData->matrixBuffersDeviceMemory, 0) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to bind project matrix buffer"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to bind project matrix buffer"), std::move(*appData.release())};
     
     if (vkBindBufferMemory(appData->device, appData->viewMatrixBuffer, appData->matrixBuffersDeviceMemory, appData->matrixBufferSizeAligned) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to bind view matrix buffer"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to bind view matrix buffer"), std::move(*appData.release())};
     
     if (vkBindBufferMemory(appData->device, appData->modelMatrixBuffer, appData->matrixBuffersDeviceMemory, appData->matrixBufferSizeAligned * 2) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to bind model matrix buffer"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to bind model matrix buffer"), std::move(*appData.release())};
     
     return appData;
 }
@@ -143,7 +143,7 @@ AppDataPtr create_matrix_buffers(AppDataPtr appData)
     }
     catch(AppDataError error)
     {
-        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create matrix buffers"), error.appData});
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create matrix buffers"), std::move(error.appData)});
     }
     
     return appData;

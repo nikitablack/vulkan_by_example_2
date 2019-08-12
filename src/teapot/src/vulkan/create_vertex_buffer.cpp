@@ -34,7 +34,7 @@ AppDataPtr create_vertex_buffer(AppDataPtr appData)
         appData->vertexBuffer = error.bufferData.buffer;
         appData->vertexBufferDeviceMemory = error.bufferData.bufferDeviceMemory;
     
-        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create vertex buffer"), *appData});
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create vertex buffer"), std::move(*appData.release())});
     }
     
     set_debug_utils_object_name(appData->instance,
