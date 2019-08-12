@@ -50,7 +50,7 @@ AppDataPtr create_logical_device(AppDataPtr appData)
     deviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
     
     if (vkCreateDevice(appData->physicalDevice, &deviceCreateInfo, nullptr, &appData->device) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create logical device"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create logical device"), std::move(*appData.release())};
     
     return appData;
 }

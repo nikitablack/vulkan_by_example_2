@@ -17,7 +17,6 @@ struct AppData
     std::vector<char const *> layers{};
     std::vector<char const *> instanceExtensions{};
     std::vector<char const *> deviceExtensions{};
-    PFN_vkDebugUtilsMessengerCallbackEXT debugCallback{nullptr};
     
     GLFWwindow *window{nullptr};
     VkInstance instance{VK_NULL_HANDLE};
@@ -31,6 +30,7 @@ struct AppData
     VkPhysicalDeviceFeatures physicalDeviceFeatures{};
     VkPhysicalDeviceProperties physicalDeviceProperties{};
     VkDevice device{VK_NULL_HANDLE};
+    
     VkShaderModule vertexShaderModule{VK_NULL_HANDLE};
     VkShaderModule tessControlShaderModule{VK_NULL_HANDLE};
     VkShaderModule tessEvaluationShaderModule{VK_NULL_HANDLE};
@@ -59,7 +59,7 @@ using AppDataPtr = std::unique_ptr<AppData>;
 
 struct AppDataError : public std::exception
 {
-    AppDataError(std::string msg, AppData data) : message{std::move(msg)}, appData{std::move(data)}
+    AppDataError(std::string msg, AppData && ptr) : message{std::move(msg)}, appData{std::move(ptr)}
     {}
     
     const char *what() const noexcept override

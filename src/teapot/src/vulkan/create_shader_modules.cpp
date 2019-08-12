@@ -53,7 +53,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         }
         catch (std::runtime_error const &error)
         {
-            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get vertex shader data"), *appData});
+            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get vertex shader data"), std::move(*appData.release())});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -64,7 +64,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->vertexShaderModule) != VK_SUCCESS)
-            throw AppDataError{ERROR_MESSAGE("failed to create vertex shader module"), *appData};
+            throw AppDataError{ERROR_MESSAGE("failed to create vertex shader module"), std::move(*appData.release())};
         
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
@@ -83,7 +83,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         }
         catch (std::runtime_error const &error)
         {
-            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get tesselation control shader data"), *appData});
+            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get tesselation control shader data"), std::move(*appData.release())});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -94,7 +94,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessControlShaderModule) != VK_SUCCESS)
-            throw AppDataError{ERROR_MESSAGE("failed to create tesselation control shader module"), *appData};
+            throw AppDataError{ERROR_MESSAGE("failed to create tesselation control shader module"), std::move(*appData.release())};
         
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
@@ -113,7 +113,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         }
         catch (std::runtime_error const &error)
         {
-            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get tesselation evaluation shader data"), *appData});
+            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get tesselation evaluation shader data"), std::move(*appData.release())});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -124,7 +124,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->tessEvaluationShaderModule) != VK_SUCCESS)
-            throw AppDataError{ERROR_MESSAGE("failed to create tesselation evaluation shader module"), *appData};
+            throw AppDataError{ERROR_MESSAGE("failed to create tesselation evaluation shader module"), std::move(*appData.release())};
         
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
@@ -143,7 +143,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         }
         catch (std::runtime_error const &error)
         {
-            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get fragment shader data"), *appData});
+            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get fragment shader data"), std::move(*appData.release())});
         }
         
         VkShaderModuleCreateInfo info{};
@@ -154,7 +154,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         info.pCode = shaderData.data();
         
         if (vkCreateShaderModule(appData->device, &info, nullptr, &appData->fragmentShaderModule) != VK_SUCCESS)
-            throw AppDataError{ERROR_MESSAGE("failed to create fragment shader module"), *appData};
+            throw AppDataError{ERROR_MESSAGE("failed to create fragment shader module"), std::move(*appData.release())};
         
         set_debug_utils_object_name(appData->instance,
                                     appData->device,

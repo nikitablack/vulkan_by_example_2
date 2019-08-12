@@ -34,7 +34,7 @@ using LocalDeviceBufferDataPtr = std::unique_ptr<LocalDeviceBufferData>;
 
 struct LocalDeviceBufferDataError : public std::exception
 {
-    LocalDeviceBufferDataError(std::string msg, LocalDeviceBufferData data) : message{std::move(msg)}, bufferData{std::move(data)}
+    LocalDeviceBufferDataError(std::string msg, LocalDeviceBufferData && data) : message{std::move(msg)}, bufferData{std::move(data)}
     {}
     
     const char * what() const noexcept override

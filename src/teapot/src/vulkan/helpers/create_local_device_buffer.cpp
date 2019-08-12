@@ -24,7 +24,7 @@ LocalDeviceBufferDataPtr create_staging_buffer(LocalDeviceBufferDataPtr bufferDa
     info.pQueueFamilyIndices = nullptr;
     
     if (vkCreateBuffer(bufferData->device, &info, nullptr, &bufferData->stagingBuffer) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create staging buffer"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create staging buffer"), std::move(*bufferData.release())};
     
     set_debug_utils_object_name(bufferData->instance,
                                 bufferData->device,
@@ -51,7 +51,7 @@ LocalDeviceBufferDataPtr find_staging_buffer_memory_type(LocalDeviceBufferDataPt
     }
     catch (std::runtime_error const & error)
     {
-        std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to find memory index for staging buffer"), *bufferData});
+        std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to find memory index for staging buffer"), std::move(*bufferData.release())});
     }
     
     return bufferData;
@@ -71,7 +71,7 @@ LocalDeviceBufferDataPtr find_staging_buffer_memory_type(LocalDeviceBufferDataPt
     info.memoryTypeIndex = bufferData->stagingBufferMemoryTypeIndex;
     
     if (vkAllocateMemory(bufferData->device, &info, nullptr, &bufferData->stagingBufferDeviceMemory) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to allocate staging buffer memory"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to allocate staging buffer memory"), std::move(*bufferData.release())};
     
     set_debug_utils_object_name(bufferData->instance,
                                 bufferData->device,
@@ -85,7 +85,7 @@ LocalDeviceBufferDataPtr find_staging_buffer_memory_type(LocalDeviceBufferDataPt
 LocalDeviceBufferDataPtr bind_staging_buffer_and_memory(LocalDeviceBufferDataPtr bufferData)
 {
     if (vkBindBufferMemory(bufferData->device, bufferData->stagingBuffer, bufferData->stagingBufferDeviceMemory, 0) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to bind staging buffer and memory"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to bind staging buffer and memory"), std::move(*bufferData.release())};
     
     return bufferData;
 }
@@ -94,7 +94,7 @@ LocalDeviceBufferDataPtr copy_data_to_staging_buffer(LocalDeviceBufferDataPtr bu
 {
     void * mappedDataPtr{nullptr};
     if (vkMapMemory(bufferData->device, bufferData->stagingBufferDeviceMemory, 0, bufferData->dataSize, 0, &mappedDataPtr) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to map staging buffer memory"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to map staging buffer memory"), std::move(*bufferData.release())};
     
     std::memcpy(mappedDataPtr, bufferData->data, static_cast<size_t>(bufferData->dataSize));
     
@@ -118,7 +118,7 @@ LocalDeviceBufferDataPtr create_buffer(LocalDeviceBufferDataPtr bufferData)
     info.pQueueFamilyIndices = nullptr;
     
     if (vkCreateBuffer(bufferData->device, &info, nullptr, &bufferData->buffer) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create buffer"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create buffer"), std::move(*bufferData.release())};
     
     set_debug_utils_object_name(bufferData->instance,
                                 bufferData->device,
@@ -144,7 +144,7 @@ LocalDeviceBufferDataPtr find_buffer_memory_type(LocalDeviceBufferDataPtr buffer
     }
     catch(std::runtime_error const & error)
     {
-        std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to find memory index for buffer"), *bufferData});
+        std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to find memory index for buffer"), std::move(*bufferData.release())});
     }
     
     return bufferData;
@@ -164,7 +164,7 @@ LocalDeviceBufferDataPtr create_device_memory(LocalDeviceBufferDataPtr bufferDat
     info.memoryTypeIndex = bufferData->bufferMemoryTypeIndex;
     
     if (vkAllocateMemory(bufferData->device, &info, nullptr, &bufferData->bufferDeviceMemory) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to allocate buffer memory"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to allocate buffer memory"), std::move(*bufferData.release())};
     
     set_debug_utils_object_name(bufferData->instance,
                                 bufferData->device,
@@ -178,7 +178,7 @@ LocalDeviceBufferDataPtr create_device_memory(LocalDeviceBufferDataPtr bufferDat
 LocalDeviceBufferDataPtr bind_buffer_and_memory(LocalDeviceBufferDataPtr bufferData)
 {
     if (vkBindBufferMemory(bufferData->device, bufferData->buffer, bufferData->bufferDeviceMemory, 0) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to bind buffer and memory"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to bind buffer and memory"), std::move(*bufferData.release())};
     
     return bufferData;
 }
@@ -194,7 +194,7 @@ LocalDeviceBufferDataPtr create_copy_command_pool(LocalDeviceBufferDataPtr buffe
     info.queueFamilyIndex = bufferData->copyQueueFamilyIndex;
     
     if (vkCreateCommandPool(bufferData->device, &info, nullptr, &bufferData->commandPool) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create command pool"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create command pool"), std::move(*bufferData.release())};
     
     set_debug_utils_object_name(bufferData->instance,
                                 bufferData->device,
@@ -217,7 +217,7 @@ LocalDeviceBufferDataPtr allocate_command_buffer(LocalDeviceBufferDataPtr buffer
     info.commandBufferCount = 1;
     
     if (vkAllocateCommandBuffers(bufferData->device, &info, &bufferData->commandBuffer) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to allocate command buffer"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to allocate command buffer"), std::move(*bufferData.release())};
     
     set_debug_utils_object_name(bufferData->instance,
                                 bufferData->device,
@@ -237,7 +237,7 @@ LocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData)
     beginInfo.pInheritanceInfo = nullptr;
     
     if (vkBeginCommandBuffer(bufferData->commandBuffer, &beginInfo) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to begin command buffer"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to begin command buffer"), std::move(*bufferData.release())};
     
     {
         VkBufferCopy copy{};
@@ -265,7 +265,7 @@ LocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData)
     }
     
     if (vkEndCommandBuffer(bufferData->commandBuffer) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to end command buffer"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to end command buffer"), std::move(*bufferData.release())};
     
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -279,10 +279,10 @@ LocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData)
     submitInfo.pSignalSemaphores = nullptr;
     
     if (vkQueueSubmit(bufferData->copyQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to submit queue"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to submit queue"), std::move(*bufferData.release())};
     
     if (vkQueueWaitIdle(bufferData->copyQueue) != VK_SUCCESS)
-        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to wait queue idle"), *bufferData};
+        throw LocalDeviceBufferDataError{ERROR_MESSAGE("failed to wait queue idle"), std::move(*bufferData.release())};
     
     return bufferData;
 }
