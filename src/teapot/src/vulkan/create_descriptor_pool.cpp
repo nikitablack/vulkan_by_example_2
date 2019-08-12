@@ -25,7 +25,7 @@ AppDataPtr create_descriptor_pool(AppDataPtr appData)
     info.pPoolSizes = poolSizes.data();
     
     if (vkCreateDescriptorPool(appData->device, &info, nullptr, &appData->descriptorPool) != VK_SUCCESS)
-        AppDataError{ERROR_MESSAGE("failed to create descriptor pool"), *appData};
+        AppDataError{ERROR_MESSAGE("failed to create descriptor pool"), std::move(*appData.release())};
     
     set_debug_utils_object_name(appData->instance,
                                 appData->device,

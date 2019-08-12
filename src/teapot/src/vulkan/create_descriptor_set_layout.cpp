@@ -43,7 +43,7 @@ AppDataPtr create_descriptor_set_layout(AppDataPtr appData)
     info.pBindings = descriptorSetLayoutBindings.data();
     
     if (vkCreateDescriptorSetLayout(appData->device, &info, nullptr, &appData->descriptorSetLayout) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to create descriptor set layout"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to create descriptor set layout"), std::move(*appData.release())};
     
     set_debug_utils_object_name(appData->instance,
                                 appData->device,

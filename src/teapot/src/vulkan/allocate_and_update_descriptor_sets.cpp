@@ -88,7 +88,7 @@ AppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData)
     appData->descriptorSets.resize(numConcurrentResources);
     
     if (vkAllocateDescriptorSets(appData->device, &info, appData->descriptorSets.data()) != VK_SUCCESS)
-        throw AppDataError{ERROR_MESSAGE("failed to allocate descriptor set"), *appData};
+        throw AppDataError{ERROR_MESSAGE("failed to allocate descriptor set"), std::move(*appData.release())};
     
     for (uint32_t i{ 0 }; i < numConcurrentResources; ++i)
     {
