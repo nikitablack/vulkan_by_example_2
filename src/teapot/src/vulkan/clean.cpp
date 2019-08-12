@@ -8,16 +8,7 @@ void clean(AppData appData) noexcept
     if (appData.device)
     {
         vkDestroyDescriptorSetLayout(appData.device, appData.descriptorSetLayout, nullptr);
-        appData.descriptorSetLayout = VK_NULL_HANDLE;
-        
         vkDestroyDescriptorPool(appData.device, appData.descriptorPool, nullptr);
-        appData.descriptorPool = VK_NULL_HANDLE;
-        
-        vkDestroyBuffer(appData.device, appData.projMatrixBuffer, nullptr);
-        appData.projMatrixBuffer = VK_NULL_HANDLE;
-        
-        vkDestroyBuffer(appData.device, appData.viewMatrixBuffer, nullptr);
-        appData.viewMatrixBuffer = VK_NULL_HANDLE;
         
         vkDestroyBuffer(appData.device, appData.projMatrixBuffer, nullptr);
         vkDestroyBuffer(appData.device, appData.viewMatrixBuffer, nullptr);
