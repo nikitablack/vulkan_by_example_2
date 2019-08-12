@@ -8,22 +8,22 @@ struct PatchData
     vec4 color;
 };
 
-layout(binding = 0, row_major) readonly buffer StorageBuffer
+layout(set = 0, binding = 0, row_major) readonly buffer StorageBuffer
 {
     PatchData patchData[];
 };
 
-layout(binding = 1) uniform ProjectionUniformBuffer
+layout(set = 0, binding = 1) uniform ProjectionUniformBuffer
 {
     layout(row_major) mat4 projectionMatrix;
 };
 
-layout(binding = 2) uniform ViewUniformBuffer
+layout(set = 0, binding = 2) uniform ViewUniformBuffer
 {
     layout(row_major) mat4 viewMatrix;
 };
 
-layout(binding = 3) uniform ModelUniformBuffer
+layout(set = 0, binding = 3) uniform ModelUniformBuffer
 {
     layout(row_major) mat4 modelMatrix;
 };

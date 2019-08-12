@@ -1,11 +1,12 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <array>
 #include <cassert>
 
-MaybeAppDataPtr create_descriptor_pool(AppDataPtr appData) noexcept
+AppDataPtr create_descriptor_pool(AppDataPtr appData)
 {
     assert(!appData->descriptorPool);
     
@@ -24,15 +25,13 @@ MaybeAppDataPtr create_descriptor_pool(AppDataPtr appData) noexcept
     info.pPoolSizes = poolSizes.data();
     
     if (vkCreateDescriptorPool(appData->device, &info, nullptr, &appData->descriptorPool) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create descriptor pool", std::move(appData)});
+        AppDataError{ERROR_MESSAGE("failed to create descriptor pool"), *appData};
     
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_DESCRIPTOR_POOL,
                                 reinterpret_cast<uint64_t>(appData->descriptorPool),
                                 "descriptor pool");
-#endif
     
-    return std::move(appData);
+    return appData;
 }

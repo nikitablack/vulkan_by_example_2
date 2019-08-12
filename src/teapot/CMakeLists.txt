@@ -7,16 +7,17 @@ find_package(Vulkan REQUIRED)
 add_executable(teapot "")
 
 target_sources(teapot PRIVATE
+        src/utils/error_message.hpp
+
         src/vulkan/helpers/create_local_device_buffer.cpp
-        src/vulkan/helpers/create_local_device_buffer.h
-        src/vulkan/helpers/get_supported_memory_property_index.h
+        src/vulkan/helpers/create_local_device_buffer.hpp
+        src/vulkan/helpers/get_supported_memory_property_index.hpp
         src/vulkan/helpers/get_supported_memory_property_index.cpp
-        src/vulkan/helpers/set_debug_utils_object_name.h
+        src/vulkan/helpers/set_debug_utils_object_name.hpp
         src/vulkan/helpers/set_debug_utils_object_name.cpp
 
         src/vulkan/allocate_and_update_descriptor_sets.cpp
         src/vulkan/clean.cpp
-        src/vulkan/create_debug_utils_messenger.cpp
         src/vulkan/create_descriptor_pool.cpp
         src/vulkan/create_descriptor_set_layout.cpp
         src/vulkan/create_index_buffer.cpp
@@ -30,18 +31,18 @@ target_sources(teapot PRIVATE
         src/vulkan/get_device_qeues.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
-        src/vulkan/teapot_vulkan.h
-        src/vulkan/vulkan_debug_callback.cpp
+        src/vulkan/teapot_vulkan.hpp
 
         src/window/create_window.cpp
         src/window/framebuffer_size_callback.cpp
         src/window/on_key_press.cpp
-        src/window/teapot_window.h
+        src/window/window.hpp
 
-        src/AppData.h
-        src/Global.h
+        src/AppData.hpp
+        src/Global.hpp
         src/main.cpp
-        src/TeapotData.h)
+        src/TeapotData.hpp
+        )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CXXCOMPILEOPTIONS -Werror -pedantic-errors -Wall -ansi -pedantic -Wextra -Wshadow -Weffc++ -Wconversion -Wsign-conversion)
@@ -64,7 +65,6 @@ target_compile_definitions(teapot PRIVATE ENABLE_VULKAN_DEBUG_UTILS)
 target_link_libraries(teapot PRIVATE
         eigen
         glfw
-        tl
         ${Vulkan_LIBRARIES}
         )
 
