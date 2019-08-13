@@ -77,8 +77,7 @@ int main()
         glfwPollEvents();
     }
     
-    auto appDataCopy{*appData.release()};
-    clean(appDataCopy);
+    clean(std::move(*appData.release()));
     
     return 0;
 }

@@ -3,7 +3,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
 
-void clean(AppData appData) noexcept
+void clean(AppData && appData) noexcept
 {
     if (appData.device)
     {

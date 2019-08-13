@@ -2,7 +2,7 @@
 
 #include "AppData.hpp"
 
-void clean(AppData appData) noexcept;
+void clean(AppData && appData) noexcept;
 AppDataPtr create_index_buffer(AppDataPtr appData);
 AppDataPtr create_instance(AppDataPtr appData);
 AppDataPtr create_logical_device(AppDataPtr appData);
