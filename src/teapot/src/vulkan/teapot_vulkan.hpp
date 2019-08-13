@@ -3,7 +3,7 @@
 #include "AppData.hpp"
 
 AppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData);
-void clean(AppData appData) noexcept;
+void clean(AppData && appData) noexcept;
 AppDataPtr create_descriptor_pool(AppDataPtr appData);
 AppDataPtr create_descriptor_set_layout(AppDataPtr appData);
 AppDataPtr create_index_buffer(AppDataPtr appData);
