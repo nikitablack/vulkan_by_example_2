@@ -1,8 +1,9 @@
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <cassert>
 
-MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept
+AppDataPtr create_logical_device(AppDataPtr appData)
 {
     assert(!appData->device);
     
@@ -49,7 +50,7 @@ MaybeAppDataPtr create_logical_device(AppDataPtr appData) noexcept
     deviceCreateInfo.pEnabledFeatures = &physicalDeviceFeatures;
     
     if (vkCreateDevice(appData->physicalDevice, &deviceCreateInfo, nullptr, &appData->device) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create logical device", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to create logical device"), std::move(*appData.release())};
     
-    return std::move(appData);
+    return appData;
 }

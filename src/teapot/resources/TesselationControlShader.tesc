@@ -7,6 +7,11 @@ layout(push_constant) uniform PushConst
 
 layout(vertices = 16) out;
 
+in gl_PerVertex
+{
+    vec4 gl_Position;
+} gl_in[gl_MaxPatchVertices];
+
 void main()
 {
     if (gl_InvocationID == 0)

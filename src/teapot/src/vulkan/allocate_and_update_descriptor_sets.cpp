@@ -1,5 +1,6 @@
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <array>
 #include <cassert>
@@ -69,7 +70,7 @@ void update_set(VkDevice const device,
 
 }
 
-MaybeAppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData) noexcept
+AppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData)
 {
     assert(appData->descriptorSets.empty());
     
@@ -87,7 +88,7 @@ MaybeAppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData) noexcept
     appData->descriptorSets.resize(numConcurrentResources);
     
     if (vkAllocateDescriptorSets(appData->device, &info, appData->descriptorSets.data()) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to allocate descriptor set", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to allocate descriptor set"), std::move(*appData.release())};
     
     for (uint32_t i{ 0 }; i < numConcurrentResources; ++i)
     {
@@ -100,5 +101,5 @@ MaybeAppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData) noexcept
             appData->matrixBufferOffset * i);
     }
     
-    return std::move(appData);
+    return appData;
 }

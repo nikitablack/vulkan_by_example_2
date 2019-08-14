@@ -1,18 +1,20 @@
-#include "helpers/get_supported_memory_property_index.h"
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "vulkan/helpers/get_supported_memory_property_index.hpp"
+#include "vulkan/helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <cassert>
 
-namespace {
+namespace
+{
 
 VkDeviceSize get_next_alignment_up(VkDeviceSize const baseSize, VkDeviceSize const alignment)
 {
     return (baseSize + alignment - 1) & (~(alignment - 1));
 }
 
-MaybeAppDataPtr create_buffers(AppDataPtr appData) noexcept
+AppDataPtr create_buffers(AppDataPtr appData)
 {
     VkDeviceSize dataSize{shaderDataSize * 16};
     dataSize = get_next_alignment_up(dataSize,
@@ -31,37 +33,31 @@ MaybeAppDataPtr create_buffers(AppDataPtr appData) noexcept
     info.pQueueFamilyIndices = nullptr;
     
     if (vkCreateBuffer(appData->device, &info, nullptr, &appData->projMatrixBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create projection matrix buffer", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create projection matrix buffer"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_BUFFER,
                                 reinterpret_cast<uint64_t>(appData->projMatrixBuffer),
                                 "projection matrix buffer");
-#endif
     
     if (vkCreateBuffer(appData->device, &info, nullptr, &appData->viewMatrixBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create view matrix buffer", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create view matrix buffer"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_BUFFER,
                                 reinterpret_cast<uint64_t>(appData->viewMatrixBuffer),
                                 "view matrix buffer");
-#endif
     
     if (vkCreateBuffer(appData->device, &info, nullptr, &appData->modelMatrixBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create model matrix buffer", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create model matrix buffer"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_BUFFER,
                                 reinterpret_cast<uint64_t>(appData->modelMatrixBuffer),
                                 "model matrix buffer");
-#endif
     
     VkMemoryRequirements memRequirements{};
     vkGetBufferMemoryRequirements(appData->device, appData->projMatrixBuffer, &memRequirements);
@@ -69,42 +65,47 @@ MaybeAppDataPtr create_buffers(AppDataPtr appData) noexcept
     appData->matrixBufferSizeAligned = get_next_alignment_up(memRequirements.size,
                                                              memRequirements.alignment);
 
-    return std::move(appData);
+    return appData;
 }
 
-MaybeAppDataPtr allocate_memory(AppDataPtr appData) noexcept
+AppDataPtr allocate_memory(AppDataPtr appData)
 {
     VkMemoryRequirements memRequirements{};
     vkGetBufferMemoryRequirements(appData->device, appData->projMatrixBuffer, &memRequirements);
     
-    auto const mbMemPropIndex{get_supported_memory_property_index(appData->physicalDevice,
-                                                                  memRequirements.memoryTypeBits,
-                                                                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)};
+    uint32_t memPropIndex;
     
-    if (!mbMemPropIndex)
-        return tl::make_unexpected(AppDataError{"failed to find memory index for matrix buffers", std::move(appData)});
+    try
+    {
+        memPropIndex = get_supported_memory_property_index(appData->physicalDevice,
+                                                           memRequirements.memoryTypeBits,
+                                                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
+                                                           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    }
+    catch (std::runtime_error const & error)
+    {
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to find memory index for matrix buffers"), std::move(*appData.release())});
+    }
     
     VkMemoryAllocateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     info.pNext = nullptr;
     info.allocationSize = appData->matrixBufferSizeAligned * 3;
-    info.memoryTypeIndex = *mbMemPropIndex;
+    info.memoryTypeIndex = memPropIndex;
     
     if (vkAllocateMemory(appData->device, &info, nullptr, &appData->matrixBuffersDeviceMemory) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to allocate matrix buffers memory", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to allocate matrix buffers memory"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_DEVICE_MEMORY,
                                 reinterpret_cast<uint64_t>(appData->matrixBuffersDeviceMemory),
                                 "matrix buffers device memory");
-#endif
     
-    return std::move(appData);
+    return appData;
 }
 
-MaybeAppDataPtr bind_buffers(AppDataPtr appData) noexcept
+AppDataPtr bind_buffers(AppDataPtr appData)
 {
     VkMemoryRequirements memRequirements{};
     
@@ -114,29 +115,36 @@ MaybeAppDataPtr bind_buffers(AppDataPtr appData) noexcept
     vkGetBufferMemoryRequirements(appData->device, appData->modelMatrixBuffer, &memRequirements);
     
     if (vkBindBufferMemory(appData->device, appData->projMatrixBuffer, appData->matrixBuffersDeviceMemory, 0) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to bind project matrix buffer", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to bind project matrix buffer"), std::move(*appData.release())};
     
     if (vkBindBufferMemory(appData->device, appData->viewMatrixBuffer, appData->matrixBuffersDeviceMemory, appData->matrixBufferSizeAligned) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to bind view matrix buffer", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to bind view matrix buffer"), std::move(*appData.release())};
     
     if (vkBindBufferMemory(appData->device, appData->modelMatrixBuffer, appData->matrixBuffersDeviceMemory, appData->matrixBufferSizeAligned * 2) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to bind model matrix buffer", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to bind model matrix buffer"), std::move(*appData.release())};
     
-    return std::move(appData);
+    return appData;
 }
 
 }
 
-MaybeAppDataPtr create_matrix_buffers(AppDataPtr appData) noexcept
+AppDataPtr create_matrix_buffers(AppDataPtr appData)
 {
     assert(!appData->projMatrixBuffer);
     assert(!appData->viewMatrixBuffer);
     assert(!appData->modelMatrixBuffer);
     assert(!appData->matrixBuffersDeviceMemory);
     
-    auto mbAppData{create_buffers(std::move(appData))
-                   .and_then(allocate_memory)
-                   .and_then(bind_buffers)};
+    try
+    {
+        appData = create_buffers(std::move(appData));
+        appData = allocate_memory(std::move(appData));
+        appData = bind_buffers(std::move(appData));
+    }
+    catch(AppDataError error)
+    {
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create matrix buffers"), std::move(error.appData)});
+    }
     
-    return std::move(mbAppData);
+    return appData;
 }
