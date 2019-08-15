@@ -311,7 +311,7 @@ AppDataPtr draw(AppDataPtr appData)
         {
             appData = resize_swapchain(std::move(appData));
         }
-        catch(AppDataError error)
+        catch(AppDataError & error)
         {
             std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to resize swapchain"), std::move(error.appData)});
         }
