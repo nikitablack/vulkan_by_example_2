@@ -50,7 +50,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         {
             shaderData = load_shader("VertexShader.spv");
         }
-        catch (std::runtime_error const &error)
+        catch (std::runtime_error const & error)
         {
             std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get vertex shader data"), std::move(*appData.release())});
         }
@@ -74,7 +74,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         {
             shaderData = load_shader("TesselationControlShader.spv");
         }
-        catch (std::runtime_error const &error)
+        catch (std::runtime_error const & error)
         {
             std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get tesselation control shader data"), std::move(*appData.release())});
         }
@@ -98,7 +98,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         {
             shaderData = load_shader("TesselationEvaluationShader.spv");
         }
-        catch (std::runtime_error const &error)
+        catch (std::runtime_error const & error)
         {
             std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get tesselation evaluation shader data"), std::move(*appData.release())});
         }
@@ -122,7 +122,7 @@ AppDataPtr create_shader_modules(AppDataPtr appData)
         {
             shaderData = load_shader("FragmentShader.spv");
         }
-        catch (std::runtime_error const &error)
+        catch (std::runtime_error const & error)
         {
             std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to get fragment shader data"), std::move(*appData.release())});
         }
