@@ -18,9 +18,9 @@ void handle_error(std::exception const & error, uint32_t const level =  0)
     {
         std::rethrow_if_nested(error);
     }
-    catch(std::exception const & e)
+    catch(std::exception const & nestedError)
     {
-        handle_error(error, level + 1);
+        handle_error(nestedError, level + 1);
     }
     catch(...)
     {
@@ -36,7 +36,7 @@ int main()
     {
         appData = create_window(std::move(appData));
     }
-    catch (AppDataError error)
+    catch (std::exception const & error)
     {
         handle_error(error);
         return 1;
