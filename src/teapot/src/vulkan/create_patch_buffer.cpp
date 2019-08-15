@@ -41,7 +41,7 @@ AppDataPtr create_patch_buffer(AppDataPtr appData)
         appData->patchBuffer = bufferData->buffer;
         appData->patchBufferDeviceMemory = bufferData->bufferDeviceMemory;
     }
-    catch(LocalDeviceBufferDataError error)
+    catch(LocalDeviceBufferDataError const & error)
     {
         appData->patchBuffer = error.bufferData.buffer;
         appData->patchBufferDeviceMemory = error.bufferData.bufferDeviceMemory;
