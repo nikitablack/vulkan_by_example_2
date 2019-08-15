@@ -330,7 +330,7 @@ LocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPtr buf
         bufferData = allocate_command_buffer(std::move(bufferData));
         bufferData = copy_buffer(std::move(bufferData));
     }
-    catch (LocalDeviceBufferDataError error)
+    catch (LocalDeviceBufferDataError & error)
     {
         error.bufferData = clean(std::move(error.bufferData));
         std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create local device buffer"), std::move(error.bufferData)});
