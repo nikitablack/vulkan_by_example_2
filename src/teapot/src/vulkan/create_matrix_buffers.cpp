@@ -141,7 +141,7 @@ AppDataPtr create_matrix_buffers(AppDataPtr appData)
         appData = allocate_memory(std::move(appData));
         appData = bind_buffers(std::move(appData));
     }
-    catch(AppDataError error)
+    catch(AppDataError & error)
     {
         std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create matrix buffers"), std::move(error.appData)});
     }
