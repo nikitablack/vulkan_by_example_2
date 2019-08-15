@@ -36,7 +36,7 @@ int main()
     {
         appData = create_window(std::move(appData));
     }
-    catch (AppDataError const & error)
+    catch (AppDataError error)
     {
         handle_error(error);
         return 1;
