@@ -287,7 +287,7 @@ LocalDeviceBufferDataPtr copy_buffer(LocalDeviceBufferDataPtr bufferData)
     return bufferData;
 }
 
-LocalDeviceBufferData clear(LocalDeviceBufferData bufferData) noexcept
+LocalDeviceBufferData clean(LocalDeviceBufferData && bufferData) noexcept
 {
     vkDestroyBuffer(bufferData.device, bufferData.stagingBuffer, nullptr);
     bufferData.stagingBuffer = VK_NULL_HANDLE;
@@ -301,16 +301,12 @@ LocalDeviceBufferData clear(LocalDeviceBufferData bufferData) noexcept
     return bufferData;
 }
 
-LocalDeviceBufferDataPtr clear(LocalDeviceBufferDataPtr bufferData) noexcept
+LocalDeviceBufferDataPtr clean(LocalDeviceBufferDataPtr bufferData) noexcept
 {
-    vkDestroyBuffer(bufferData->device, bufferData->stagingBuffer, nullptr);
-    bufferData->stagingBuffer = VK_NULL_HANDLE;
+    auto bufferDataToClean{*bufferData};
+    bufferDataToClean = clean(std::move(bufferDataToClean));
     
-    vkFreeMemory(bufferData->device, bufferData->stagingBufferDeviceMemory, nullptr);
-    bufferData->stagingBufferDeviceMemory = VK_NULL_HANDLE;
-    
-    vkDestroyCommandPool(bufferData->device, bufferData->commandPool, nullptr);
-    bufferData->commandPool = VK_NULL_HANDLE;
+    *bufferData = bufferDataToClean;
     
     return bufferData;
 }
@@ -334,14 +330,13 @@ LocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPtr buf
         bufferData = allocate_command_buffer(std::move(bufferData));
         bufferData = copy_buffer(std::move(bufferData));
     }
-    catch (LocalDeviceBufferDataError & error)
+    catch (LocalDeviceBufferDataError error)
     {
-        error.bufferData = clear(std::move(error.bufferData));
-    
-        throw std::move(error);
+        error.bufferData = clean(std::move(error.bufferData));
+        std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to create local device buffer"), std::move(error.bufferData)});
     }
     
-    bufferData = clear(std::move(bufferData));
+    bufferData = clean(std::move(bufferData));
     
     return bufferData;
 }

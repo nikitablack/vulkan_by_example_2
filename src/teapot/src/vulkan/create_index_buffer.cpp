@@ -29,7 +29,7 @@ AppDataPtr create_index_buffer(AppDataPtr appData)
         appData->indexBuffer = bufferData->buffer;
         appData->indexBufferDeviceMemory = bufferData->bufferDeviceMemory;
     }
-    catch(LocalDeviceBufferDataError error)
+    catch(LocalDeviceBufferDataError const & error)
     {
         appData->indexBuffer = error.bufferData.buffer;
         appData->indexBufferDeviceMemory = error.bufferData.bufferDeviceMemory;

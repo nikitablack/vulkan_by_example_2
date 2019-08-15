@@ -29,7 +29,7 @@ AppDataPtr create_vertex_buffer(AppDataPtr appData)
         appData->vertexBuffer = bufferData->buffer;
         appData->vertexBufferDeviceMemory = bufferData->bufferDeviceMemory;
     }
-    catch(LocalDeviceBufferDataError error)
+    catch(LocalDeviceBufferDataError const & error)
     {
         appData->vertexBuffer = error.bufferData.buffer;
         appData->vertexBufferDeviceMemory = error.bufferData.bufferDeviceMemory;
