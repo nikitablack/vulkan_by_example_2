@@ -29,7 +29,7 @@ AppDataPtr create_patch_buffer(AppDataPtr appData)
         bufferData->device = appData->device;
         bufferData->physicalDevice = appData->physicalDevice;
         bufferData->dataSize = sizeof(decltype(patchData)::value_type) * patchData.size();
-        bufferData->data = appData->teapotData.patches.data();
+        bufferData->data = patchData.data();
         bufferData->localDeviceBufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
         bufferData->copyQueueFamilyIndex = appData->graphicsFamilyQueueIndex;
         bufferData->copyQueue = appData->graphicsQueue;
@@ -41,7 +41,7 @@ AppDataPtr create_patch_buffer(AppDataPtr appData)
         appData->patchBuffer = bufferData->buffer;
         appData->patchBufferDeviceMemory = bufferData->bufferDeviceMemory;
     }
-    catch(LocalDeviceBufferDataError error)
+    catch(LocalDeviceBufferDataError const & error)
     {
         appData->patchBuffer = error.bufferData.buffer;
         appData->patchBufferDeviceMemory = error.bufferData.bufferDeviceMemory;
