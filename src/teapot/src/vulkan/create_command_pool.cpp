@@ -1,9 +1,10 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <cassert>
 
-MaybeAppDataPtr create_command_pool(AppDataPtr appData) noexcept
+AppDataPtr create_command_pool(AppDataPtr appData)
 {
     assert(!appData->graphicsCommandPool);
     
@@ -14,31 +15,27 @@ MaybeAppDataPtr create_command_pool(AppDataPtr appData) noexcept
     info.queueFamilyIndex = appData->graphicsFamilyQueueIndex;
     
     if (vkCreateCommandPool(appData->device, &info, nullptr, &appData->graphicsCommandPool) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create graphics command pool", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create graphics command pool"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_COMMAND_POOL,
                                 reinterpret_cast<uint64_t>(appData->graphicsCommandPool),
                                 "graphics command pool");
-#endif
     
     if(appData->graphicsFamilyQueueIndex != appData->presentFamilyQueueIndex)
     {
         info.queueFamilyIndex = appData->presentFamilyQueueIndex;
     
         if (vkCreateCommandPool(appData->device, &info, nullptr, &appData->presentCommandPool) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to create command pool", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+            throw AppDataError{ERROR_MESSAGE("failed to create command pool"), std::move(*appData.release())};
+        
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
                                     VK_OBJECT_TYPE_COMMAND_POOL,
                                     reinterpret_cast<uint64_t>(appData->presentCommandPool),
                                     "present command pool");
-#endif
     }
     
-    return std::move(appData);
+    return appData;
 }

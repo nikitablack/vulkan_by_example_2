@@ -1,9 +1,10 @@
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "teapot_vulkan.hpp"
 
-MaybeAppDataPtr resize_swapchain(AppDataPtr appData) noexcept
+AppDataPtr resize_swapchain(AppDataPtr appData)
 {
     if (vkDeviceWaitIdle(appData->device) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed device to wait idle on swapchain resize", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed device to wait device to complete"), std::move(*appData.release())};
     
     for (auto const framebuffer : appData->framebuffers)
         vkDestroyFramebuffer(appData->device, framebuffer, nullptr);
@@ -17,14 +18,16 @@ MaybeAppDataPtr resize_swapchain(AppDataPtr appData) noexcept
     
     appData->swapchainImages.clear();
     
-    auto mbAppData{create_swap_chain(std::move(appData))
-                   .and_then(get_swapchain_images_and_views)
-                   .and_then(create_framebuffers)};
+    try
+    {
+        appData = create_swapchain(std::move(appData));
+        appData = get_swapchain_images_and_views(std::move(appData));
+        appData = create_framebuffers(std::move(appData));
+    }
+    catch(AppDataError error)
+    {
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to resize swapchain"), std::move(error.appData)});
+    }
     
-    if (!mbAppData)
-        return mbAppData;
-    
-    appData = std::move(*mbAppData);
-    
-    return std::move(appData);
+    return appData;
 }

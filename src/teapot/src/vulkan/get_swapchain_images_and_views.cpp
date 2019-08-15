@@ -1,10 +1,11 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <algorithm>
 #include <cassert>
 
-MaybeAppDataPtr get_swapchain_images_and_views(AppDataPtr appData) noexcept
+AppDataPtr get_swapchain_images_and_views(AppDataPtr appData)
 {
     assert(appData->swapchainImages.empty());
     assert(appData->swapchainImageViews.empty());
@@ -12,12 +13,12 @@ MaybeAppDataPtr get_swapchain_images_and_views(AppDataPtr appData) noexcept
     uint32_t imageCount{0};
     
     if (vkGetSwapchainImagesKHR(appData->device, appData->swapchain, &imageCount, nullptr) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to get swap chain images", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to get swap chain images"), std::move(*appData.release())};
     
     appData->swapchainImages.resize(imageCount);
     
     if (vkGetSwapchainImagesKHR(appData->device, appData->swapchain, &imageCount, appData->swapchainImages.data()) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to get swap chain images", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to get swap chain images"), std::move(*appData.release())};
     
     appData->swapchainImageViews.resize(appData->swapchainImages.size());
     
@@ -34,16 +35,14 @@ MaybeAppDataPtr get_swapchain_images_and_views(AppDataPtr appData) noexcept
         info.subresourceRange = VkImageSubresourceRange{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
         
         if (vkCreateImageView(appData->device, &info, nullptr, &appData->swapchainImageViews[i]) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to create image view", std::move(appData)});
+            throw AppDataError{ERROR_MESSAGE("failed to create image view"), std::move(*appData.release())};
         
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
                                     VK_OBJECT_TYPE_IMAGE_VIEW,
                                     reinterpret_cast<uint64_t>(appData->swapchainImageViews[i]),
                                     std::string{"swapchain image view " + std::to_string(i)}.c_str());
-#endif
     }
     
-    return std::move(appData);
+    return appData;
 }

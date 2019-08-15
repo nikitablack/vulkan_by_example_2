@@ -1,9 +1,10 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <cassert>
 
-MaybeAppDataPtr create_semaphores(AppDataPtr appData) noexcept
+AppDataPtr create_semaphores(AppDataPtr appData)
 {
     assert(!appData->imageAvailableSemaphore);
     assert(!appData->graphicsFinishedSemaphore);
@@ -14,40 +15,34 @@ MaybeAppDataPtr create_semaphores(AppDataPtr appData) noexcept
     info.flags = 0;
     
     if (vkCreateSemaphore(appData->device, &info, nullptr, &appData->imageAvailableSemaphore) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create image available semaphore", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create image available semaphore"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_SEMAPHORE,
                                 reinterpret_cast<uint64_t>(appData->imageAvailableSemaphore),
                                 "image available semaphore");
-#endif
     
     if (vkCreateSemaphore(appData->device, &info, nullptr, &appData->graphicsFinishedSemaphore) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create graphics finished semaphore", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create graphics finished semaphore"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_SEMAPHORE,
                                 reinterpret_cast<uint64_t>(appData->graphicsFinishedSemaphore),
                                 "graphics finished semaphore");
-#endif
     
     if(appData->graphicsFamilyQueueIndex != appData->presentFamilyQueueIndex)
     {
         if (vkCreateSemaphore(appData->device, &info, nullptr, &appData->queueOwnershipChangedSemaphore) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to create queue ownership changed semaphore", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+            throw AppDataError{ERROR_MESSAGE("failed to create queue ownership changed semaphore"), std::move(*appData.release())};
+        
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
                                     VK_OBJECT_TYPE_SEMAPHORE,
                                     reinterpret_cast<uint64_t>(appData->queueOwnershipChangedSemaphore),
                                     "queue ownership changed semaphore");
-#endif
     }
     
-    return std::move(appData);
+    return appData;
 }

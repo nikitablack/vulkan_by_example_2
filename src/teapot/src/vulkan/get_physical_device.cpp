@@ -1,11 +1,13 @@
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <tuple>
 
-namespace {
+namespace
+{
 
 void check_required_device_extensions(VkPhysicalDevice const physicalDevice,
                                       std::vector<char const *> const &requiredExtensions)
@@ -169,17 +171,17 @@ std::tuple<uint32_t, uint32_t> get_device_graphics_and_present_queue_families(Vk
 
 }
 
-MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
+AppDataPtr get_physical_device(AppDataPtr appData)
 {
     uint32_t deviceCount{0};
     
     if (vkEnumeratePhysicalDevices(appData->instance, &deviceCount, nullptr) != VK_SUCCESS || deviceCount == 0)
-        return tl::make_unexpected(AppDataError{"failed to find GPUs with Vulkan support", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to find GPUs with Vulkan support"), std::move(*appData.release())};
     
     std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
     
     if (vkEnumeratePhysicalDevices(appData->instance, &deviceCount, physicalDevices.data()) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to find GPUs with Vulkan support", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to find GPUs with Vulkan support"), std::move(*appData.release())};
     
     for (VkPhysicalDevice const d : physicalDevices)
     {
@@ -197,7 +199,7 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
             
             vkGetPhysicalDeviceProperties(appData->physicalDevice, &appData->physicalDeviceProperties);
             
-            return std::move(appData);
+            return appData;
         }
         catch (std::runtime_error const & /*error*/)
         {
@@ -205,5 +207,5 @@ MaybeAppDataPtr get_physical_device(AppDataPtr appData) noexcept
         }
     }
     
-    return tl::make_unexpected(AppDataError{"failed to find suitable device", std::move(appData)});
+    throw AppDataError{ERROR_MESSAGE("failed to find suitable device"), std::move(*appData.release())};
 }

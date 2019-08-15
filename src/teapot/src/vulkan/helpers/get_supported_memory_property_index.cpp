@@ -1,8 +1,11 @@
-#include "get_supported_memory_property_index.h"
+#include "utils/error_message.hpp"
+#include "get_supported_memory_property_index.hpp"
 
-std::optional<uint32_t> get_supported_memory_property_index(VkPhysicalDevice const physicalDevice,
-                                                            uint32_t const supportedMemoryTypeBits,
-                                                            VkMemoryPropertyFlags const desiredMemoryFlags) noexcept
+#include <stdexcept>
+
+uint32_t get_supported_memory_property_index(VkPhysicalDevice const physicalDevice,
+                                             uint32_t const supportedMemoryTypeBits,
+                                             VkMemoryPropertyFlags const desiredMemoryFlags)
 {
     VkPhysicalDeviceMemoryProperties memProperties{};
     vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -10,10 +13,8 @@ std::optional<uint32_t> get_supported_memory_property_index(VkPhysicalDevice con
     for (uint32_t i{ 0 }; i < memProperties.memoryTypeCount; ++i)
     {
         if ((supportedMemoryTypeBits & (static_cast<uint32_t>(1) << i)) && (memProperties.memoryTypes[i].propertyFlags & desiredMemoryFlags) == desiredMemoryFlags)
-        {
-            return std::make_optional(i);
-        }
+            return i;
     }
     
-    return std::nullopt;
+    throw std::runtime_error{ERROR_MESSAGE("failed to find memory property index")};
 }
