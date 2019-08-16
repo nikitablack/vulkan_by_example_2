@@ -1,151 +1,79 @@
-#include "teapot_vulkan.h"
+#include "teapot_vulkan.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
 
-AppDataPtr clean(AppDataPtr appData) noexcept
+void clean(AppData && appData) noexcept
 {
-    if (appData->device)
+    if (appData.device)
     {
-        vkDestroyImage(appData->device, appData->depthImage, nullptr);
-        appData->depthImage = VK_NULL_HANDLE;
+        if(vkDeviceWaitIdle(appData.device) != VK_SUCCESS)
+            return;
     
-        vkDestroyImageView(appData->device, appData->depthImageView, nullptr);
-        appData->depthImageView = VK_NULL_HANDLE;
-    
-        vkFreeMemory(appData->device, appData->depthImageMemory, nullptr);
-        appData->depthImageMemory = VK_NULL_HANDLE;
+        vkDestroyImage(appData.device, appData.depthImage, nullptr);
+        vkDestroyImageView(appData.device, appData.depthImageView, nullptr);
+        vkFreeMemory(appData.device, appData.depthImageMemory, nullptr);
         
-        for (auto const fence : appData->graphicsFences)
-            vkDestroyFence(appData->device, fence, nullptr);
-
-        appData->graphicsFences.clear();
+        for (auto const fence : appData.graphicsFences)
+            vkDestroyFence(appData.device, fence, nullptr);
     
-        for (auto const fence : appData->presentFences)
-            vkDestroyFence(appData->device, fence, nullptr);
+        for (auto const fence : appData.presentFences)
+            vkDestroyFence(appData.device, fence, nullptr);
+        
+        vkDestroyCommandPool(appData.device, appData.graphicsCommandPool, nullptr);
+        vkDestroyCommandPool(appData.device, appData.presentCommandPool, nullptr);
+        vkDestroySemaphore(appData.device, appData.imageAvailableSemaphore, nullptr);
+        vkDestroySemaphore(appData.device, appData.graphicsFinishedSemaphore, nullptr);
+        vkDestroySemaphore(appData.device, appData.queueOwnershipChangedSemaphore, nullptr);
+        
+        for (auto const framebuffer : appData.framebuffers)
+            vkDestroyFramebuffer(appData.device, framebuffer, nullptr);
+        
+        for (auto const imageView : appData.swapchainImageViews)
+            vkDestroyImageView(appData.device, imageView, nullptr);
     
-        appData->presentFences.clear();
-
-        vkDestroyCommandPool(appData->device, appData->graphicsCommandPool, nullptr);
-        appData->graphicsCommandPool = VK_NULL_HANDLE;
-    
-        vkDestroyCommandPool(appData->device, appData->presentCommandPool, nullptr);
-        appData->presentCommandPool = VK_NULL_HANDLE;
-
-        vkDestroySemaphore(appData->device, appData->imageAvailableSemaphore, nullptr);
-        appData->imageAvailableSemaphore = VK_NULL_HANDLE;
-
-        vkDestroySemaphore(appData->device, appData->graphicsFinishedSemaphore, nullptr);
-        appData->graphicsFinishedSemaphore = VK_NULL_HANDLE;
-    
-        vkDestroySemaphore(appData->device, appData->queueOwnershipChangedSemaphore, nullptr);
-        appData->queueOwnershipChangedSemaphore = VK_NULL_HANDLE;
-
-        for (auto const framebuffer : appData->framebuffers)
-            vkDestroyFramebuffer(appData->device, framebuffer, nullptr);
-
-        appData->framebuffers.clear();
-
-        for (auto const imageView : appData->swapchainImageViews)
-            vkDestroyImageView(appData->device, imageView, nullptr);
-
-        appData->swapchainImageViews.clear();
-
-        auto const destroySwapChainFunc{ reinterpret_cast<PFN_vkDestroySwapchainKHR>(vkGetInstanceProcAddr(appData->instance, "vkDestroySwapchainKHR")) };
-
+        auto const destroySwapChainFunc{ reinterpret_cast<PFN_vkDestroySwapchainKHR>(vkGetInstanceProcAddr(appData.instance, "vkDestroySwapchainKHR")) };
         if (destroySwapChainFunc)
         {
-            destroySwapChainFunc(appData->device, appData->swapchain, nullptr);
-            appData->swapchain = VK_NULL_HANDLE;
+            destroySwapChainFunc(appData.device, appData.swapchain, nullptr);
         }
-
-        appData->swapchainImages.clear();
-
-        vkDestroyRenderPass(appData->device, appData->renderPass, nullptr);
-        appData->renderPass = VK_NULL_HANDLE;
-
-        vkDestroyPipelineLayout(appData->device, appData->pipelineLayout, nullptr);
-        appData->pipelineLayout = VK_NULL_HANDLE;
-
-        vkDestroyPipeline(appData->device, appData->solidPipeline, nullptr);
-        appData->solidPipeline = VK_NULL_HANDLE;
-
-        vkDestroyPipeline(appData->device, appData->wireframePipeline, nullptr);
-        appData->wireframePipeline = VK_NULL_HANDLE;
-
-        vkDestroyDescriptorSetLayout(appData->device, appData->descriptorSetLayout, nullptr);
-        appData->descriptorSetLayout = VK_NULL_HANDLE;
-
-        vkDestroyDescriptorPool(appData->device, appData->descriptorPool, nullptr);
-        appData->descriptorPool = VK_NULL_HANDLE;
-
-        vkDestroyBuffer(appData->device, appData->projMatrixBuffer, nullptr);
-        appData->projMatrixBuffer = VK_NULL_HANDLE;
-
-        vkDestroyBuffer(appData->device, appData->viewMatrixBuffer, nullptr);
-        appData->viewMatrixBuffer = VK_NULL_HANDLE;
-
-        vkDestroyBuffer(appData->device, appData->modelMatrixBuffer, nullptr);
-        appData->modelMatrixBuffer = VK_NULL_HANDLE;
-
-        vkFreeMemory(appData->device, appData->matrixBuffersDeviceMemory, nullptr);
-        appData->matrixBuffersDeviceMemory = VK_NULL_HANDLE;
-
-        vkDestroyBuffer(appData->device, appData->patchBuffer, nullptr);
-        appData->patchBuffer = VK_NULL_HANDLE;
-
-        vkFreeMemory(appData->device, appData->patchBufferDeviceMemory, nullptr);
-        appData->patchBufferDeviceMemory = VK_NULL_HANDLE;
-
-        vkDestroyBuffer(appData->device, appData->indexBuffer, nullptr);
-        appData->indexBuffer = VK_NULL_HANDLE;
-
-        vkFreeMemory(appData->device, appData->indexBufferDeviceMemory, nullptr);
-        appData->indexBufferDeviceMemory = VK_NULL_HANDLE;
-
-        vkDestroyBuffer(appData->device, appData->vertexBuffer, nullptr);
-        appData->vertexBuffer = VK_NULL_HANDLE;
-
-        vkFreeMemory(appData->device, appData->vertexBufferDeviceMemory, nullptr);
-        appData->vertexBufferDeviceMemory = VK_NULL_HANDLE;
-
-        vkDestroyShaderModule(appData->device, appData->vertexShaderModule, nullptr);
-        appData->vertexShaderModule = VK_NULL_HANDLE;
-
-        vkDestroyShaderModule(appData->device, appData->tessControlShaderModule, nullptr);
-        appData->tessControlShaderModule = VK_NULL_HANDLE;
-
-        vkDestroyShaderModule(appData->device, appData->tessEvaluationShaderModule, nullptr);
-        appData->tessEvaluationShaderModule = VK_NULL_HANDLE;
-
-        vkDestroyShaderModule(appData->device, appData->fragmentShaderModule, nullptr);
-        appData->fragmentShaderModule = VK_NULL_HANDLE;
-
-        vkDestroyDevice(appData->device, nullptr);
-        appData->device = VK_NULL_HANDLE;
+        
+        vkDestroyRenderPass(appData.device, appData.renderPass, nullptr);
+        vkDestroyPipelineLayout(appData.device, appData.pipelineLayout, nullptr);
+        vkDestroyPipeline(appData.device, appData.solidPipeline, nullptr);
+        vkDestroyPipeline(appData.device, appData.wireframePipeline, nullptr);
+        
+        vkDestroyDescriptorSetLayout(appData.device, appData.descriptorSetLayout, nullptr);
+        vkDestroyDescriptorPool(appData.device, appData.descriptorPool, nullptr);
+        
+        vkDestroyBuffer(appData.device, appData.projMatrixBuffer, nullptr);
+        vkDestroyBuffer(appData.device, appData.viewMatrixBuffer, nullptr);
+        vkDestroyBuffer(appData.device, appData.modelMatrixBuffer, nullptr);
+        vkFreeMemory(appData.device, appData.matrixBuffersDeviceMemory, nullptr);
+        
+        vkDestroyBuffer(appData.device, appData.patchBuffer, nullptr);
+        vkFreeMemory(appData.device, appData.patchBufferDeviceMemory, nullptr);
+        
+        vkDestroyBuffer(appData.device, appData.indexBuffer, nullptr);
+        vkFreeMemory(appData.device, appData.indexBufferDeviceMemory, nullptr);
+        
+        vkDestroyBuffer(appData.device, appData.vertexBuffer, nullptr);
+        vkFreeMemory(appData.device, appData.vertexBufferDeviceMemory, nullptr);
+        
+        vkDestroyShaderModule(appData.device, appData.vertexShaderModule, nullptr);
+        vkDestroyShaderModule(appData.device, appData.tessControlShaderModule, nullptr);
+        vkDestroyShaderModule(appData.device, appData.tessEvaluationShaderModule, nullptr);
+        vkDestroyShaderModule(appData.device, appData.fragmentShaderModule, nullptr);
+        
+        vkDestroyDevice(appData.device, nullptr);
     }
-    if (appData->instance)
+    
+    if (appData.instance)
     {
-        vkDestroySurfaceKHR(appData->instance, appData->surface, nullptr);
-        appData->surface = VK_NULL_HANDLE;
+        vkDestroySurfaceKHR(appData.instance, appData.surface, nullptr);
     }
     
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
-    PFN_vkDestroyDebugUtilsMessengerEXT const func{
-            reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(appData->instance,
-                                                                                        "vkDestroyDebugUtilsMessengerEXT"))};
-    
-    if (func)
-    {
-        func(appData->instance, appData->debugUtilsMessenger, nullptr);
-        appData->debugUtilsMessenger = VK_NULL_HANDLE;
-    }
-#endif
-    
-    vkDestroyInstance(appData->instance, nullptr);
-    appData->instance = VK_NULL_HANDLE;
+    vkDestroyInstance(appData.instance, nullptr);
     
     glfwTerminate();
-    
-    return std::move(appData);
 }

@@ -1,5 +1,6 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -7,14 +8,14 @@
 #include <algorithm>
 #include <cassert>
 
-MaybeAppDataPtr create_swap_chain(AppDataPtr appData) noexcept
+AppDataPtr create_swapchain(AppDataPtr appData)
 {
     auto const oldSwapChain{appData->swapchain};
     
     VkSurfaceCapabilitiesKHR surfaceCapabilities{};
     
     if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(appData->physicalDevice, appData->surface, &surfaceCapabilities) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to fet physical device surface capabilities", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to fet physical device surface capabilities"), std::move(*appData.release())};
     
     int windowWidth{0};
     int windowHeight{0};
@@ -28,8 +29,7 @@ MaybeAppDataPtr create_swap_chain(AppDataPtr appData) noexcept
     else
         appData->surfaceExtent = surfaceCapabilities.currentExtent;
     
-    uint32_t const imageCount{std::min(std::max(surfaceCapabilities.minImageCount, uint32_t{3}),
-                                       surfaceCapabilities.maxImageCount)};
+    uint32_t const imageCount{std::min(std::max(surfaceCapabilities.minImageCount, uint32_t{3}), surfaceCapabilities.maxImageCount)};
     
     VkSwapchainCreateInfoKHR info{};
     info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -52,26 +52,23 @@ MaybeAppDataPtr create_swap_chain(AppDataPtr appData) noexcept
     info.oldSwapchain = appData->swapchain;
     
     if (vkCreateSwapchainKHR(appData->device, &info, nullptr, &appData->swapchain) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create swap chain", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create swap chain"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_SWAPCHAIN_KHR,
                                 reinterpret_cast<uint64_t>(appData->swapchain),
                                 "swap chain");
-#endif
     
     if(oldSwapChain)
     {
-        auto const destroySwapChainFunc{reinterpret_cast<PFN_vkDestroySwapchainKHR>(vkGetInstanceProcAddr(appData->instance,
-                                                                                                          "vkDestroySwapchainKHR"))};
+        auto const destroySwapChainFunc{reinterpret_cast<PFN_vkDestroySwapchainKHR>(vkGetInstanceProcAddr(appData->instance, "vkDestroySwapchainKHR"))};
         
         if (!destroySwapChainFunc)
-            return tl::make_unexpected(AppDataError{"failed to destroy old swapchain", std::move(appData)});
+            throw AppDataError{ERROR_MESSAGE("failed to destroy old swapchain"), std::move(*appData.release())};
         
         destroySwapChainFunc(appData->device, oldSwapChain, nullptr);
     }
     
-    return std::move(appData);
+    return appData;
 }

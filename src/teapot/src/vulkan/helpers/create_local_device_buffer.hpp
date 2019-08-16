@@ -2,8 +2,6 @@
 
 #include "vulkan/vulkan.h"
 
-#include <tl/expected.hpp>
-
 #include <memory>
 #include <string>
 
@@ -34,12 +32,18 @@ struct LocalDeviceBufferData
 
 using LocalDeviceBufferDataPtr = std::unique_ptr<LocalDeviceBufferData>;
 
-struct LocalDeviceBufferDataError
+struct LocalDeviceBufferDataError : public std::exception
 {
+    LocalDeviceBufferDataError(std::string msg, LocalDeviceBufferData && data) : message{std::move(msg)}, bufferData{std::move(data)}
+    {}
+    
+    const char * what() const noexcept override
+    {
+        return message.c_str();
+    }
+    
     std::string message{};
-    LocalDeviceBufferDataPtr bufferData{};
+    LocalDeviceBufferData bufferData{};
 };
 
-using MaybeLocalDeviceBufferDataPtr = tl::expected<LocalDeviceBufferDataPtr, LocalDeviceBufferDataError>;
-
-MaybeLocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPtr bufferData) noexcept;
+LocalDeviceBufferDataPtr create_local_device_buffer(LocalDeviceBufferDataPtr bufferData);

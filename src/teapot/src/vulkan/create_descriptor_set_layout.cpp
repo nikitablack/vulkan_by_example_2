@@ -1,10 +1,11 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <array>
 #include <cassert>
 
-MaybeAppDataPtr create_descriptor_set_layout(AppDataPtr appData) noexcept
+AppDataPtr create_descriptor_set_layout(AppDataPtr appData)
 {
     assert(!appData->descriptorSetLayout);
     
@@ -42,15 +43,13 @@ MaybeAppDataPtr create_descriptor_set_layout(AppDataPtr appData) noexcept
     info.pBindings = descriptorSetLayoutBindings.data();
     
     if (vkCreateDescriptorSetLayout(appData->device, &info, nullptr, &appData->descriptorSetLayout) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create descriptor set layout", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to create descriptor set layout"), std::move(*appData.release())};
     
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT,
                                 reinterpret_cast<uint64_t>(appData->descriptorSetLayout),
                                 "descriptor set layout");
-#endif
     
-    return std::move(appData);
+    return appData;
 }

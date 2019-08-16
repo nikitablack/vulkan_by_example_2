@@ -1,10 +1,11 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <array>
 #include <cassert>
 
-MaybeAppDataPtr create_render_pass(AppDataPtr appData) noexcept
+AppDataPtr create_render_pass(AppDataPtr appData)
 {
     assert(!appData->renderPass);
     
@@ -71,15 +72,13 @@ MaybeAppDataPtr create_render_pass(AppDataPtr appData) noexcept
     info.pDependencies = &subpassDependency;
     
     if (vkCreateRenderPass(appData->device, &info, nullptr, &appData->renderPass) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create render pass", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create render pass"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_RENDER_PASS,
                                 reinterpret_cast<uint64_t>(appData->renderPass),
                                 "render pass");
-#endif
     
-    return std::move(appData);
+    return appData;
 }

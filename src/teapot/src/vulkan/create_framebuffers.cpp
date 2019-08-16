@@ -1,10 +1,11 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <array>
 #include <cassert>
 
-MaybeAppDataPtr create_framebuffers(AppDataPtr appData) noexcept
+AppDataPtr create_framebuffers(AppDataPtr appData)
 {
     assert(appData->framebuffers.empty());
     
@@ -26,16 +27,14 @@ MaybeAppDataPtr create_framebuffers(AppDataPtr appData) noexcept
         info.layers = 1;
         
         if (vkCreateFramebuffer(appData->device, &info, nullptr, &appData->framebuffers[i]) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to create framebuffer", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+            throw AppDataError{ERROR_MESSAGE("failed to create framebuffer"), std::move(*appData.release())};
+        
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
                                     VK_OBJECT_TYPE_FRAMEBUFFER,
                                     reinterpret_cast<uint64_t>(appData->framebuffers[i]),
                                     std::string{"framebuffer " + std::to_string(i)}.c_str());
-#endif
     }
     
-    return std::move(appData);
+    return appData;
 }

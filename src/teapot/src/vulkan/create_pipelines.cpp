@@ -1,11 +1,12 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <array>
 #include <cassert>
 
-MaybeAppDataPtr create_pipelines(AppDataPtr appData) noexcept
+AppDataPtr create_pipelines(AppDataPtr appData)
 {
     assert(!appData->wireframePipeline);
     assert(!appData->solidPipeline);
@@ -193,15 +194,13 @@ MaybeAppDataPtr create_pipelines(AppDataPtr appData) noexcept
     pipelineInfo.basePipelineIndex = -1;
     
     if (vkCreateGraphicsPipelines(appData->device, nullptr, 1, &pipelineInfo, nullptr, &appData->wireframePipeline) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create wireframe pipeline", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create wireframe pipeline"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_PIPELINE,
                                 reinterpret_cast<uint64_t>(appData->wireframePipeline),
                                 "wireframe pipeline");
-#endif
     
     // rasterization
     rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
@@ -211,15 +210,13 @@ MaybeAppDataPtr create_pipelines(AppDataPtr appData) noexcept
     pipelineInfo.basePipelineHandle = appData->wireframePipeline;
     
     if (vkCreateGraphicsPipelines(appData->device, nullptr, 1, &pipelineInfo, nullptr, &appData->solidPipeline) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create solid pipeline", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create solid pipeline"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_PIPELINE,
                                 reinterpret_cast<uint64_t>(appData->solidPipeline),
                                 "solid pipeline");
-#endif
     
-    return std::move(appData);
+    return appData;
 }

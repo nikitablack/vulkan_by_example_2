@@ -1,6 +1,7 @@
-#include "helpers/get_supported_memory_property_index.h"
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
+#include "utils/error_message.hpp"
+#include "helpers/get_supported_memory_property_index.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
 
 #include <array>
 #include <cassert>
@@ -8,10 +9,8 @@
 namespace
 {
 
-MaybeAppDataPtr create_image(AppDataPtr appData) noexcept
+AppDataPtr create_image(AppDataPtr appData)
 {
-    assert(!appData->depthImage);
-    
     VkImageCreateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     info.pNext = nullptr;
@@ -30,64 +29,60 @@ MaybeAppDataPtr create_image(AppDataPtr appData) noexcept
     info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     
     if (vkCreateImage(appData->device, &info, nullptr, &appData->depthImage) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create depth image", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create depth image"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_IMAGE,
                                 reinterpret_cast<uint64_t>(appData->depthImage),
                                 "depth image");
-#endif
     
-    return std::move(appData);
+    return appData;
 }
 
-MaybeAppDataPtr allocate_device_memory(AppDataPtr appData) noexcept
+AppDataPtr allocate_device_memory(AppDataPtr appData)
 {
-    assert(!appData->depthImageMemory);
-    
     VkMemoryRequirements memRequirements{};
     vkGetImageMemoryRequirements(appData->device, appData->depthImage, &memRequirements);
-    
-    auto const mbMemPropIndex{get_supported_memory_property_index(appData->physicalDevice,
-                                                                  memRequirements.memoryTypeBits,
-                                                                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)};
-    
-    if (!mbMemPropIndex)
-        return tl::make_unexpected(AppDataError{"failed to find memory index for depth image", std::move(appData)});
     
     VkMemoryAllocateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     info.pNext = nullptr;
     info.allocationSize = memRequirements.size;
-    info.memoryTypeIndex = *mbMemPropIndex;
+    
+    try
+    {
+        info.memoryTypeIndex = get_supported_memory_property_index(appData->physicalDevice,
+                                                                   memRequirements.memoryTypeBits,
+                                                                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    }
+    catch(std::runtime_error const & error)
+    {
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to allocate device memory"), std::move(*appData.release())});
+    }
     
     if (vkAllocateMemory(appData->device, &info, nullptr, &appData->depthImageMemory) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to allocate depth image memory", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to allocate depth image memory"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_DEVICE_MEMORY,
                                 reinterpret_cast<uint64_t>(appData->depthImageMemory),
                                 "depth image device memory");
-#endif
-    return std::move(appData);
+    
+    return appData;
 }
 
-MaybeAppDataPtr bind_image_and_memory(AppDataPtr appData) noexcept
+AppDataPtr bind_image_and_memory(AppDataPtr appData)
 {
     if (vkBindImageMemory(appData->device, appData->depthImage, appData->depthImageMemory, 0) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to bind depth image", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to bind depth image"), std::move(*appData.release())};
     
-    return std::move(appData);
+    return appData;
 }
 
-MaybeAppDataPtr create_image_view(AppDataPtr appData) noexcept
+AppDataPtr create_image_view(AppDataPtr appData)
 {
-    assert(!appData->depthImageView);
-    
     VkImageViewCreateInfo info{};
     info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     info.pNext = nullptr;
@@ -99,27 +94,36 @@ MaybeAppDataPtr create_image_view(AppDataPtr appData) noexcept
     info.subresourceRange = VkImageSubresourceRange{VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
     
     if (vkCreateImageView(appData->device, &info, nullptr, &appData->depthImageView) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create depth image view", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create depth image view"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_IMAGE_VIEW,
                                 reinterpret_cast<uint64_t>(appData->depthImageView),
                                 "depth image view");
-#endif
     
-    return std::move(appData);
+    return appData;
 }
 
 } // namespace
 
-MaybeAppDataPtr create_depth_buffer_and_view(AppDataPtr appData) noexcept
+AppDataPtr create_depth_buffer_and_view(AppDataPtr appData)
 {
-    auto mbAppData{create_image(std::move(appData))
-                   .and_then(allocate_device_memory)
-                   .and_then(bind_image_and_memory)
-                   .and_then(create_image_view)};
+    assert(!appData->depthImage);
+    assert(!appData->depthImageMemory);
+    assert(!appData->depthImageView);
     
-    return mbAppData;
+    try
+    {
+        appData = create_image(std::move(appData));
+        appData = allocate_device_memory(std::move(appData));
+        appData = bind_image_and_memory(std::move(appData));
+        appData = create_image_view(std::move(appData));
+    }
+    catch(AppDataError & error)
+    {
+        std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to create depth buffer and view"), std::move(error.appData)});
+    }
+    
+    return appData;
 }

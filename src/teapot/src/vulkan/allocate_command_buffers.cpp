@@ -1,10 +1,11 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <cassert>
 
-MaybeAppDataPtr allocate_command_buffers(AppDataPtr appData) noexcept
+AppDataPtr allocate_command_buffers(AppDataPtr appData)
 {
     assert(appData->graphicsCommandBuffers.empty());
     assert(appData->presentCommandBuffers.empty());
@@ -19,17 +20,15 @@ MaybeAppDataPtr allocate_command_buffers(AppDataPtr appData) noexcept
     appData->graphicsCommandBuffers.resize(numConcurrentResources);
     
     if (vkAllocateCommandBuffers(appData->device, &info, appData->graphicsCommandBuffers.data()) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to allocate graphics command buffers", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to allocate graphics command buffers"), std::move(*appData.release())};
     
     for (uint32_t i{0}; i < numConcurrentResources; ++i)
     {
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
         set_debug_utils_object_name(appData->instance,
                                     appData->device,
                                     VK_OBJECT_TYPE_COMMAND_BUFFER,
                                     reinterpret_cast<uint64_t>(appData->graphicsCommandBuffers[i]),
                                     std::string{"graphics command buffer " + std::to_string(i)}.c_str());
-#endif
     }
     
     if(appData->graphicsFamilyQueueIndex != appData->presentFamilyQueueIndex)
@@ -39,19 +38,17 @@ MaybeAppDataPtr allocate_command_buffers(AppDataPtr appData) noexcept
         appData->presentCommandBuffers.resize(numConcurrentResources);
     
         if (vkAllocateCommandBuffers(appData->device, &info, appData->presentCommandBuffers.data()) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to allocate present command buffers", std::move(appData)});
+            throw AppDataError{ERROR_MESSAGE("failed to allocate present command buffers"), std::move(*appData.release())};
     
         for (uint32_t i{0}; i < numConcurrentResources; ++i)
         {
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
             set_debug_utils_object_name(appData->instance,
                                         appData->device,
                                         VK_OBJECT_TYPE_COMMAND_BUFFER,
                                         reinterpret_cast<uint64_t>(appData->presentCommandBuffers[i]),
                                         std::string{"present command buffer " + std::to_string(i)}.c_str());
-#endif
         }
     }
     
-    return std::move(appData);
+    return appData;
 }

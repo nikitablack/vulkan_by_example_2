@@ -1,10 +1,11 @@
-#include "helpers/set_debug_utils_object_name.h"
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "helpers/set_debug_utils_object_name.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <cassert>
 
-MaybeAppDataPtr create_pipeline_layout(AppDataPtr appData) noexcept
+AppDataPtr create_pipeline_layout(AppDataPtr appData)
 {
     assert(!appData->pipelineLayout);
     
@@ -23,15 +24,13 @@ MaybeAppDataPtr create_pipeline_layout(AppDataPtr appData) noexcept
     info.pPushConstantRanges = &pushConstantRange;
     
     if (vkCreatePipelineLayout(appData->device, &info, nullptr, &appData->pipelineLayout) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to create pipeline layout", std::move(appData)});
-
-#ifdef ENABLE_VULKAN_DEBUG_UTILS
+        throw AppDataError{ERROR_MESSAGE("failed to create pipeline layout"), std::move(*appData.release())};
+    
     set_debug_utils_object_name(appData->instance,
                                 appData->device,
                                 VK_OBJECT_TYPE_PIPELINE_LAYOUT,
                                 reinterpret_cast<uint64_t>(appData->pipelineLayout),
                                 "pipeline layout");
-#endif
     
-    return std::move(appData);
+    return appData;
 }

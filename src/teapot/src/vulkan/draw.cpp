@@ -1,5 +1,6 @@
-#include "teapot_vulkan.h"
-#include "Global.h"
+#include "utils/error_message.hpp"
+#include "teapot_vulkan.hpp"
+#include "Global.hpp"
 
 #include <Dense>
 
@@ -76,19 +77,19 @@ void update_model_matrix(uint32_t const n, char * const memPtr)
 
 } // namespace
 
-MaybeAppDataPtr draw(AppDataPtr appData) noexcept
+AppDataPtr draw(AppDataPtr appData)
 {
     uint32_t imageIndex{};
     if(vkAcquireNextImageKHR(appData->device, appData->swapchain, std::numeric_limits<uint64_t>::max(), appData->imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to acquire swap chain image", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to acquire swap chain image"), std::move(*appData.release())};
     
     auto const graphicsFence{appData->graphicsFences[appData->currentResourceIndex]};
     
     if(vkWaitForFences(appData->device, 1, &graphicsFence, VK_TRUE, std::numeric_limits<uint64_t>::max()) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to wait for graphics fence", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to wait for graphics fence"), std::move(*appData.release())};
     
     if(vkResetFences(appData->device, 1, &graphicsFence) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to reset graphics fence", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to reset graphics fence"), std::move(*appData.release())};
     
     auto const graphicsCommandBuffer{appData->graphicsCommandBuffers[appData->currentResourceIndex]};
     
@@ -101,11 +102,11 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
     commandBufferBeginInfo.pInheritanceInfo = nullptr;
     
     if(vkBeginCommandBuffer(graphicsCommandBuffer, &commandBufferBeginInfo) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to begin graphics command buffer", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to begin graphics command buffer"), std::move(*appData.release())};
     
     void * mappedMatrixBuffersMemory{nullptr};
     if (vkMapMemory(appData->device, appData->matrixBuffersDeviceMemory, 0, VK_WHOLE_SIZE, 0, &mappedMatrixBuffersMemory) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to map uniform buffer memory", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to map uniform buffer memory"), std::move(*appData.release())};
 
     update_projection_matrix(static_cast<float>(appData->surfaceExtent.width) / static_cast<float>(appData->surfaceExtent.height), static_cast<char *>(mappedMatrixBuffersMemory) + appData->currentResourceIndex * appData->matrixBufferOffset);
     update_view_matrix(static_cast<char *>(mappedMatrixBuffersMemory) + appData->matrixBufferSizeAligned + appData->currentResourceIndex * appData->matrixBufferOffset);
@@ -213,7 +214,7 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
     }
     
     if(vkEndCommandBuffer(graphicsCommandBuffer) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to end graphics command buffer", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to end graphics command buffer"), std::move(*appData.release())};
     
     VkPipelineStageFlags const waitStage{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
     
@@ -229,24 +230,24 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
     submitInfo.pSignalSemaphores = &appData->graphicsFinishedSemaphore;
     
     if(vkQueueSubmit(appData->graphicsQueue, 1, &submitInfo, graphicsFence) != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to submit graphics command buffer", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to submit graphics command buffer"), std::move(*appData.release())};
     
     // https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples#multiple-queues
     if(appData->graphicsFamilyQueueIndex != appData->presentFamilyQueueIndex)
     {
         auto const presentFence{appData->presentFences[appData->currentResourceIndex]};
-    
+        
         if(vkWaitForFences(appData->device, 1, &presentFence, VK_TRUE, std::numeric_limits<uint64_t>::max()) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to wait for present fence", std::move(appData)});
-    
+            throw AppDataError{ERROR_MESSAGE("failed to wait for present fence"), std::move(*appData.release())};
+            
         if(vkResetFences(appData->device, 1, &presentFence) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to reset present fence", std::move(appData)});
+            throw AppDataError{ERROR_MESSAGE("failed to reset present fence"), std::move(*appData.release())};
         
         auto const presentCommandBuffer{appData->presentCommandBuffers[appData->currentResourceIndex]};
-    
+        
         if(vkBeginCommandBuffer(presentCommandBuffer, &commandBufferBeginInfo) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to begin present command buffer", std::move(appData)});
-    
+            throw AppDataError{ERROR_MESSAGE("failed to begin present command buffer"), std::move(*appData.release())};
+            
         VkImageMemoryBarrier acquireImageMemoryBarrier{};
         acquireImageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         acquireImageMemoryBarrier.pNext = nullptr;
@@ -271,10 +272,10 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
                              &acquireImageMemoryBarrier);
     
         if(vkEndCommandBuffer(presentCommandBuffer) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to end present command buffer", std::move(appData)});
+            throw AppDataError{ERROR_MESSAGE("failed to end present command buffer"), std::move(*appData.release())};
         
         VkPipelineStageFlags const waitStage2{VK_PIPELINE_STAGE_ALL_COMMANDS_BIT};
-    
+        
         VkSubmitInfo submitInfo2{};
         submitInfo2.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo2.pNext = nullptr;
@@ -285,9 +286,9 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
         submitInfo2.pCommandBuffers = &presentCommandBuffer;
         submitInfo2.signalSemaphoreCount = 1;
         submitInfo2.pSignalSemaphores = &appData->queueOwnershipChangedSemaphore;
-    
+        
         if(vkQueueSubmit(appData->presentQueue, 1, &submitInfo2, presentFence) != VK_SUCCESS)
-            return tl::make_unexpected(AppDataError{"failed to submit present command buffer", std::move(appData)});
+            throw AppDataError{ERROR_MESSAGE("failed to submit present command buffer"), std::move(*appData.release())};
     }
     
     VkSemaphore const waitSemaphore{appData->graphicsFamilyQueueIndex != appData->presentFamilyQueueIndex ? appData->queueOwnershipChangedSemaphore : appData->graphicsFinishedSemaphore};
@@ -307,18 +308,20 @@ MaybeAppDataPtr draw(AppDataPtr appData) noexcept
     {
         framebufferResized = false;
         
-        auto mbAppData{resize_swapchain(std::move(appData))};
-        
-        if(!mbAppData)
-            return mbAppData;
-    
-        appData = std::move(*mbAppData);
+        try
+        {
+            appData = resize_swapchain(std::move(appData));
+        }
+        catch(AppDataError & error)
+        {
+            std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to resize swapchain"), std::move(error.appData)});
+        }
     }
     else if(res != VK_SUCCESS)
-        return tl::make_unexpected(AppDataError{"failed to present", std::move(appData)});
+        throw AppDataError{ERROR_MESSAGE("failed to present"), std::move(*appData.release())};
     
     ++appData->currentResourceIndex;
     appData->currentResourceIndex %= numConcurrentResources;
     
-    return std::move(appData);
+    return appData;
 }
