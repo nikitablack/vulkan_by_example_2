@@ -56,7 +56,7 @@ AppDataPtr allocate_device_memory(AppDataPtr appData)
                                                                    memRequirements.memoryTypeBits,
                                                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     }
-    catch(std::runtime_error const & error)
+    catch(std::runtime_error const & /*error*/)
     {
         std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to allocate device memory"), std::move(*appData.release())});
     }
