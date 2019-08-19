@@ -3,6 +3,8 @@
 #include "AppData.hpp"
 
 AppDataPtr allocate_and_update_descriptor_sets(AppDataPtr appData);
+AppDataPtr check_instance_extensions(AppDataPtr appData);
+AppDataPtr check_layers(AppDataPtr appData);
 void clean(AppData && appData) noexcept;
 AppDataPtr create_descriptor_pool(AppDataPtr appData);
 AppDataPtr create_descriptor_set_layout(AppDataPtr appData);
