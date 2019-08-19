@@ -18,6 +18,8 @@ target_sources(teapot PRIVATE
 
         src/vulkan/allocate_and_update_descriptor_sets.cpp
         src/vulkan/allocate_command_buffers.cpp
+        src/vulkan/check_instance_extensions.cpp
+        src/vulkan/check_layers.cpp
         src/vulkan/clean.cpp
         src/vulkan/create_command_pool.cpp
         src/vulkan/create_descriptor_pool.cpp
