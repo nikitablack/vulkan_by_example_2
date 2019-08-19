@@ -2,6 +2,8 @@
 
 #include "AppData.hpp"
 
+AppDataPtr check_instance_extensions(AppDataPtr appData);
+AppDataPtr check_layers(AppDataPtr appData);
 void clean(AppData && appData) noexcept;
 AppDataPtr create_index_buffer(AppDataPtr appData);
 AppDataPtr create_instance(AppDataPtr appData);

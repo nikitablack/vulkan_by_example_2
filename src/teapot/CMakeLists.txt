@@ -16,6 +16,8 @@ target_sources(teapot PRIVATE
         src/vulkan/helpers/set_debug_utils_object_name.hpp
         src/vulkan/helpers/set_debug_utils_object_name.cpp
 
+        src/vulkan/check_instance_extensions.cpp
+        src/vulkan/check_layers.cpp
         src/vulkan/clean.cpp
         src/vulkan/create_index_buffer.cpp
         src/vulkan/create_instance.cpp
