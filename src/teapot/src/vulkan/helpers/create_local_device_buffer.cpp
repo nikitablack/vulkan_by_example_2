@@ -49,7 +49,7 @@ LocalDeviceBufferDataPtr find_staging_buffer_memory_type(LocalDeviceBufferDataPt
     
         bufferData->stagingBufferMemoryTypeIndex = memPropIndex;
     }
-    catch (std::runtime_error const & error)
+    catch (std::runtime_error const & /*error*/)
     {
         std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to find memory index for staging buffer"), std::move(*bufferData.release())});
     }
@@ -142,7 +142,7 @@ LocalDeviceBufferDataPtr find_buffer_memory_type(LocalDeviceBufferDataPtr buffer
     
         bufferData->bufferMemoryTypeIndex = memPropIndex;
     }
-    catch(std::runtime_error const & error)
+    catch(std::runtime_error const & /*error*/)
     {
         std::throw_with_nested(LocalDeviceBufferDataError{ERROR_MESSAGE("failed to find memory index for buffer"), std::move(*bufferData.release())});
     }
