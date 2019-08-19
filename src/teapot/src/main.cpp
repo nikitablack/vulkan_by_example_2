@@ -47,6 +47,8 @@ int main()
     {
         appData = create_window(std::move(appData));
         appData = get_required_window_extensions(std::move(appData));
+        appData = check_instance_extensions(std::move(appData));
+        appData = check_layers(std::move(appData));
         appData = create_instance(std::move(appData));
         appData = create_surface(std::move(appData));
         appData = get_physical_device(std::move(appData));
