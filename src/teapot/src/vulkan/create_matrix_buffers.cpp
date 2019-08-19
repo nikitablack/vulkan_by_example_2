@@ -82,7 +82,7 @@ AppDataPtr allocate_memory(AppDataPtr appData)
                                                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
                                                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
     }
-    catch (std::runtime_error const & error)
+    catch (std::runtime_error const & /*error*/)
     {
         std::throw_with_nested(AppDataError{ERROR_MESSAGE("failed to find memory index for matrix buffers"), std::move(*appData.release())});
     }
