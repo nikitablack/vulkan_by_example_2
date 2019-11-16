@@ -90,22 +90,25 @@ int main()
     
     while (!glfwWindowShouldClose(appData->window))
     {
-        try
+        if (!glfwGetWindowAttrib(appData->window, GLFW_ICONIFIED))
         {
-            appData = draw(std::move(appData));
-        }
-        catch (AppDataError & error)
-        {
-            handle_error(error);
-            
-            clean(std::move(error.appData));
-            
-            return 1;
-        }
-        catch (...)
-        {
-            std::cout << "unknown error" << '\n';
-            return 1;
+            try
+            {
+                appData = draw(std::move(appData));
+            }
+            catch (AppDataError & error)
+            {
+                handle_error(error);
+
+                clean(std::move(error.appData));
+
+                return 1;
+            }
+            catch (...)
+            {
+                std::cout << "unknown error" << '\n';
+                return 1;
+            }
         }
         
         glfwPollEvents();
