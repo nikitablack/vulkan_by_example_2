@@ -5,6 +5,7 @@
 #include "Global.hpp"
 
 #include <cassert>
+#include <stdexcept>
 
 namespace
 {
