@@ -5,6 +5,7 @@
 #include <array>
 #include <cassert>
 #include <cstring>
+#include <stdexcept>
 #include <tuple>
 
 namespace
