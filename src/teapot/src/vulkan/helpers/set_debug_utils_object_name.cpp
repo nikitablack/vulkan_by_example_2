@@ -1,11 +1,12 @@
 #include <vulkan/vulkan.h>
 
-bool set_debug_utils_object_name(VkInstance const instance,
-                                 VkDevice const device,
-                                 VkObjectType const objectType,
-                                 uint64_t const objectHandle,
-                                 char const * const pObjectName) noexcept
+bool set_debug_utils_object_name([[maybe_unused]] VkInstance const instance,
+                                 [[maybe_unused]] VkDevice const device,
+                                 [[maybe_unused]] VkObjectType const objectType,
+                                 [[maybe_unused]] uint64_t const objectHandle,
+                                 [[maybe_unused]] char const * const pObjectName) noexcept
 {
+
 #ifdef ENABLE_VULKAN_DEBUG_UTILS
     auto const func{reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(vkGetInstanceProcAddr(instance,
                                                                                              "vkSetDebugUtilsObjectNameEXT"))};
