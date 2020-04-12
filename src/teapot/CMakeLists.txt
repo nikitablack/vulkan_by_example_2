@@ -13,7 +13,7 @@ target_sources(teapot PRIVATE
         src/vulkan/create_logical_device.cpp
         src/vulkan/create_shader_modules.cpp
         src/vulkan/create_surface.cpp
-        src/vulkan/get_device_qeues.cpp
+        src/vulkan/get_device_queues.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
         src/vulkan/teapot_vulkan.hpp
