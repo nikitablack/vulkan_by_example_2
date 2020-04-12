@@ -34,6 +34,8 @@ struct AppData
     VkShaderModule tessControlShaderModule{VK_NULL_HANDLE};
     VkShaderModule tessEvaluationShaderModule{VK_NULL_HANDLE};
     VkShaderModule fragmentShaderModule{VK_NULL_HANDLE};
+    VkQueue graphicsQueue{VK_NULL_HANDLE};
+    VkQueue presentQueue{VK_NULL_HANDLE};
 };
 
 using AppDataPtr = std::unique_ptr<AppData>;

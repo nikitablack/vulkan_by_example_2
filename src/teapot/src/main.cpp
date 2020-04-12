@@ -41,6 +41,7 @@ int main()
         appData = create_surface(std::move(appData));
         appData = get_physical_device(std::move(appData));
         appData = create_logical_device(std::move(appData));
+        appData = get_device_queues(std::move(appData));
         appData = create_shader_modules(std::move(appData));
     }
     catch (std::exception const & error)
