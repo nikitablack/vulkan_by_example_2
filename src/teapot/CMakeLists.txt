@@ -35,7 +35,7 @@ target_sources(teapot PRIVATE
         src/vulkan/create_surface.cpp
         src/vulkan/create_swapchain.cpp
         src/vulkan/create_vertex_buffer.cpp
-        src/vulkan/get_device_qeues.cpp
+        src/vulkan/get_device_queues.cpp
         src/vulkan/get_physical_device.cpp
         src/vulkan/get_required_window_extensions.cpp
         src/vulkan/get_swapchain_images_and_views.cpp
